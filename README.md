@@ -14,7 +14,8 @@ It is also being hosted at: [jakub-horacek.github.io/drumpad](https://jakub-hora
 
 This new version, Drumpad 2.0, is built using the Vue 3 framework with TypeScript, bringing the project up to date with modern web development practices. The core idea remains the same: you can play virtual drums by hitting keys, and the app will play corresponding drum sounds. It's a fun and interactive way to experiment with rhythm and sound.
 
-> **Note:** Drumpad 2.0 is still in development. Once this version is finished, I will probably archive the old project.
+> [!NOTE]  
+> Drumpad 2.0 is still in development. Once this version is finished, I will probably archive the old project.
 
 ---
 
