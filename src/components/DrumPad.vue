@@ -1,10 +1,10 @@
 <template>
   <div class="drumpad">
     <div class="drumpad-grid">
-      <PadTile v-for="pad in 9" :key="pad" :pad="pad" />
+      <PadTile v-for="pad in 9" :key="pad" :pad="pad" :label="pad.toString()" />
     </div>
     <div class="drumpad-row">
-      <PadTile v-for="pad in 2" :key="pad" :pad="pad" />
+      <PadTile v-for="pad in 2" :key="pad" :pad="pad" :label="pad.toString()" />
     </div>
   </div>
 </template>

@@ -1,6 +1,26 @@
 <template>
-  <button class="pad-tile">TEST</button>
+  <button class="pad-tile" @click="onClick">
+    {{ label }}
+  </button>
 </template>
+<script lang="ts">
+import { defineComponent } from 'vue'
+import type { PropType } from 'vue'
+
+export default defineComponent({
+  name: 'PadTile',
+  props: {
+    label: {
+      type: String,
+      required: true,
+    },
+    onClick: {
+      type: Function as PropType<() => void>,
+      required: false,
+    },
+  },
+})
+</script>
 <style scoped>
 .pad-tile {
   width: 100%;
