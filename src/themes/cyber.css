@@ -1,0 +1,33 @@
+/* Cyber Theme */
+.theme-cyber {
+  --bg-primary: #000000;
+  --bg-secondary: #0a0a0a;
+  --bg-tertiary: #1a1a1a;
+  --bg-quaternary: #111111;
+
+  --text-primary: #00ff41;
+  --text-secondary: #00cc33;
+  --text-tertiary: #008822;
+
+  --accent-color: #ff0080;
+  --accent-color-light: rgba(255, 0, 128, 0.1);
+  --accent-color-dark: #cc0066;
+
+  --success-color: #00ff41;
+  --warning-color: #ffff00;
+  --danger-color: #ff0040;
+
+  --border-color: #333333;
+  --border-color-light: #444444;
+
+  --pad-bg: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
+  --pad-bg-hover: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+  --pad-bg-active: linear-gradient(135deg, #ff0080 0%, #cc0066 100%);
+
+  --pad-border: #333333;
+  --pad-border-hover: #444444;
+  --pad-border-active: #ff0080;
+
+  --pad-text: #00ff41;
+  --pad-text-secondary: #00cc33;
+}

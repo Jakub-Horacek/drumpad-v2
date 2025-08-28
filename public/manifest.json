@@ -1,0 +1,19 @@
+{
+  "name": "Drumpad 2.0",
+  "short_name": "Drumpad",
+  "description": "Professional drum pad application with recording capabilities",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f0f23",
+  "theme_color": "#0f0f23",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    }
+  ],
+  "categories": ["music", "entertainment"],
+  "lang": "en"
+}

@@ -1,0 +1,33 @@
+/* Dark Theme (Default) */
+.theme-dark {
+  --bg-primary: #0f0f23;
+  --bg-secondary: #1a1a2e;
+  --bg-tertiary: #16213e;
+  --bg-quaternary: #0f1419;
+
+  --text-primary: #ffffff;
+  --text-secondary: #a0a9c0;
+  --text-tertiary: #6b7280;
+
+  --accent-color: #3b82f6;
+  --accent-color-light: rgba(59, 130, 246, 0.1);
+  --accent-color-dark: #1d4ed8;
+
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --danger-color: #ef4444;
+
+  --border-color: #374151;
+  --border-color-light: #4b5563;
+
+  --pad-bg: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  --pad-bg-hover: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+  --pad-bg-active: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+
+  --pad-border: #374151;
+  --pad-border-hover: #4b5563;
+  --pad-border-active: #3b82f6;
+
+  --pad-text: #ffffff;
+  --pad-text-secondary: #9ca3af;
+}

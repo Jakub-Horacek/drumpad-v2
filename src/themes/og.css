@@ -1,0 +1,33 @@
+/* OG Theme (Original screenshot colors) */
+.theme-og {
+  --bg-primary: #282828;
+  --bg-secondary: #363636;
+  --bg-tertiary: #404040;
+  --bg-quaternary: #363636;
+
+  --text-primary: #e0e0e0;
+  --text-secondary: #e0e0e0;
+  --text-tertiary: #e0e0e0;
+
+  --accent-color: #f5a623;
+  --accent-color-light: rgba(245, 166, 35, 0.1);
+  --accent-color-dark: #e0961a;
+
+  --success-color: #f5a623;
+  --warning-color: #f5a623;
+  --danger-color: #f5a623;
+
+  --border-color: #4a4a4a;
+  --border-color-light: #5a5a5a;
+
+  --pad-bg: #363636;
+  --pad-bg-hover: #404040;
+  --pad-bg-active: #f5a623;
+
+  --pad-border: #4a4a4a;
+  --pad-border-hover: #5a5a5a;
+  --pad-border-active: #f5a623;
+
+  --pad-text: #e0e0e0;
+  --pad-text-secondary: #e0e0e0;
+}
