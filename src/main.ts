@@ -5,6 +5,11 @@ import App from './App.vue'
 import './assets/main.css'
 import './themes'
 
+/**
+ * Main application entry point.
+ * Initializes Vue app with Pinia store and persistence plugin.
+ * Sets up the drum pad application with all necessary configurations.
+ */
 const app = createApp(App)
 const pinia = createPinia()
 pinia.use(createPersistedState())

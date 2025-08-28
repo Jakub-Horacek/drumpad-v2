@@ -60,6 +60,7 @@ import { defineComponent, h } from 'vue'
 import DrumPad from './DrumPad.vue'
 
 // Icon components
+/** Play icon component */
 const PlayIcon = defineComponent({
   render() {
     return h('svg', { width: '24', height: '24', viewBox: '0 0 24 24', fill: 'currentColor' }, [
@@ -68,6 +69,7 @@ const PlayIcon = defineComponent({
   },
 })
 
+/** Pause icon component */
 const PauseIcon = defineComponent({
   render() {
     return h('svg', { width: '24', height: '24', viewBox: '0 0 24 24', fill: 'currentColor' }, [
@@ -76,6 +78,7 @@ const PauseIcon = defineComponent({
   },
 })
 
+/** Record icon component */
 const RecordIcon = defineComponent({
   render() {
     return h('svg', { width: '24', height: '24', viewBox: '0 0 24 24', fill: 'currentColor' }, [
@@ -84,6 +87,7 @@ const RecordIcon = defineComponent({
   },
 })
 
+/** Trash/delete icon component */
 const TrashIcon = defineComponent({
   render() {
     return h('svg', { width: '24', height: '24', viewBox: '0 0 24 24', fill: 'currentColor' }, [
@@ -94,6 +98,7 @@ const TrashIcon = defineComponent({
   },
 })
 
+/** Stop icon component */
 const StopIcon = defineComponent({
   render() {
     return h('svg', { width: '24', height: '24', viewBox: '0 0 24 24', fill: 'currentColor' }, [
@@ -102,6 +107,7 @@ const StopIcon = defineComponent({
   },
 })
 
+/** Play all sounds icon component */
 const PlayAllIcon = defineComponent({
   render() {
     return h('svg', { width: '24', height: '24', viewBox: '0 0 24 24', fill: 'currentColor' }, [
@@ -111,6 +117,11 @@ const PlayAllIcon = defineComponent({
   },
 })
 
+/**
+ * Main drum pad view component.
+ * Contains the drum pad grid and recording/playback controls.
+ * Includes debug controls that are only visible in debug mode.
+ */
 export default defineComponent({
   name: 'DrumpadView',
   components: {
@@ -123,22 +134,27 @@ export default defineComponent({
     PlayAllIcon,
   },
   props: {
+    /** Whether recording is currently active */
     isRecording: {
       type: Boolean,
       required: true,
     },
+    /** Whether playback is currently active */
     isPlaying: {
       type: Boolean,
       required: true,
     },
+    /** Array of recorded drum events */
     recordedEvents: {
       type: Array,
       required: true,
     },
+    /** Whether audio is ready for playback */
     isAudioReady: {
       type: Boolean,
       required: true,
     },
+    /** Whether debug mode is enabled */
     isDebugMode: {
       type: Boolean,
       required: true,

@@ -38,6 +38,11 @@ import { useDrumpadStore } from '../stores/drumpadStore'
 import { DRUM_SAMPLES } from '../types'
 import PadTile from './PadTile.vue'
 
+/**
+ * Drum pad component that displays the main drum grid.
+ * Includes toggle controls for hi-hat and snare modes.
+ * Renders drum pads in a grid layout based on their position.
+ */
 export default defineComponent({
   name: 'DrumPad',
   components: {
@@ -46,6 +51,12 @@ export default defineComponent({
   setup() {
     const store = useDrumpadStore()
 
+    /**
+     * Computed property that returns drums sorted by their position.
+     * Creates a copy of DRUM_SAMPLES and sorts them for proper grid layout.
+     *
+     * @returns {DrumSample[]} Array of drums sorted by position
+     */
     const sortedDrums = computed(() => {
       return [...DRUM_SAMPLES].sort((a, b) => a.position - b.position)
     })

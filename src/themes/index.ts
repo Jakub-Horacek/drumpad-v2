@@ -4,13 +4,23 @@ import './og.css'
 import './light.css'
 import './cyber.css'
 
-// Theme configuration
+/**
+ * Interface representing a theme configuration.
+ * Contains metadata about available themes in the application.
+ */
 export interface ThemeConfig {
+  /** Unique identifier for the theme */
   id: string
+  /** Display name of the theme */
   name: string
+  /** Description of the theme's visual style */
   description: string
 }
 
+/**
+ * Array of all available themes in the application.
+ * Provides users with different visual styles to choose from.
+ */
 export const THEMES: ThemeConfig[] = [
   {
     id: 'dark',
@@ -34,10 +44,21 @@ export const THEMES: ThemeConfig[] = [
   },
 ]
 
+/**
+ * Get a theme configuration by its ID.
+ *
+ * @param {string} id - The theme ID to search for
+ * @returns {ThemeConfig | undefined} The theme configuration or undefined if not found
+ */
 export const getThemeById = (id: string): ThemeConfig | undefined => {
   return THEMES.find((theme) => theme.id === id)
 }
 
+/**
+ * Get the default theme configuration.
+ *
+ * @returns {ThemeConfig} The default theme (Dark theme)
+ */
 export const getDefaultTheme = (): ThemeConfig => {
   return THEMES[0] // Dark theme as default
 }

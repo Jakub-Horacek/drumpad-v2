@@ -60,6 +60,11 @@ import AppNavigation from './components/AppNavigation.vue'
 import AppFooter from './components/AppFooter.vue'
 import AudioLoadingOverlay from './components/AudioLoadingOverlay.vue'
 
+/**
+ * Main application component.
+ * Manages the overall layout, audio initialization, and keyboard event handling.
+ * Provides the main container for all views and components.
+ */
 export default defineComponent({
   name: 'App',
   components: {
@@ -74,6 +79,11 @@ export default defineComponent({
   setup() {
     const store = useDrumpadStore()
 
+    /**
+     * Handle keyboard events and pass them to the store.
+     *
+     * @param {KeyboardEvent} event - The keyboard event to handle
+     */
     const handleKeyDown = (event: KeyboardEvent) => {
       store.handleKeyDown(event)
     }

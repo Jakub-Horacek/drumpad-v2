@@ -1,16 +1,50 @@
+/**
+ * Audio service for managing drum pad sound playback and audio context.
+ * Handles audio initialization, sound preloading, volume control, and playback.
+ *
+ * @class AudioService
+ */
 class AudioService {
+  /** @private Audio context for sound processing */
   private audioContext: AudioContext | null = null
+
+  /** @private Map of drum types to their audio buffers */
   private buffers: Map<string, AudioBuffer[]> = new Map()
+
+  /** @private Master volume level (0-1) */
   private masterVolume: number = 0.7
+
+  /** @private Whether the audio service has been initialized */
   private isInitialized: boolean = false
+
+  /** @private Whether sounds are currently being loaded */
   private isLoading: boolean = false
+
+  /** @private Loading progress percentage (0-100) */
   private loadingProgress: number = 0
+
+  /** @private Total number of sounds to load */
   private totalSounds: number = 0
+
+  /** @private Number of sounds loaded so far */
   private loadedSounds: number = 0
+
+  /** @private Callbacks for loading progress updates */
   private loadingCallbacks: Array<(progress: number) => void> = []
+
+  /** @private Set of currently active audio sources */
   private activeSources: Set<AudioBufferSourceNode> = new Set()
+
+  /** @private Master gain node for volume control */
   private masterGainNode: GainNode | null = null
 
+  /**
+   * Initialize the audio context and preload all drum sounds.
+   * Creates an optimized AudioContext with low latency settings.
+   *
+   * @async
+   * @returns {Promise<void>} Promise that resolves when initialization is complete
+   */
   async initialize(): Promise<void> {
     if (this.isInitialized) return
 
@@ -36,6 +70,14 @@ class AudioService {
     }
   }
 
+  /**
+   * Preload all drum sound variants in parallel for optimal performance.
+   * Loads 3 variants of each drum type (11 types total = 33 sounds).
+   *
+   * @private
+   * @async
+   * @returns {Promise<void>} Promise that resolves when all sounds are loaded
+   */
   private async preloadSounds(): Promise<void> {
     this.isLoading = true
     this.loadingProgress = 0
@@ -86,16 +128,37 @@ class AudioService {
     this.notifyLoadingCallbacks(100)
   }
 
+  /**
+   * Update loading progress and notify all registered callbacks.
+   *
+   * @private
+   */
   private updateLoadingProgress(): void {
     this.loadedSounds++
     this.loadingProgress = Math.round((this.loadedSounds / this.totalSounds) * 100)
     this.notifyLoadingCallbacks(this.loadingProgress)
   }
 
+  /**
+   * Notify all registered loading progress callbacks.
+   *
+   * @private
+   * @param {number} progress - Current loading progress (0-100)
+   */
   private notifyLoadingCallbacks(progress: number): void {
     this.loadingCallbacks.forEach((callback) => callback(progress))
   }
 
+  /**
+   * Load a single sound file and decode it to an AudioBuffer.
+   * Uses cache-first strategy for optimal performance.
+   *
+   * @private
+   * @async
+   * @param {string} url - URL of the sound file to load
+   * @returns {Promise<AudioBuffer>} Promise that resolves to the decoded audio buffer
+   * @throws {Error} When the sound file cannot be loaded or decoded
+   */
   private async loadSound(url: string): Promise<AudioBuffer> {
     try {
       // Use cache-first strategy with fetch
@@ -118,6 +181,14 @@ class AudioService {
     }
   }
 
+  /**
+   * Play a drum sound with the specified type and variant.
+   * Creates an AudioBufferSourceNode and connects it through the master gain node.
+   *
+   * @param {string} drumType - Type of drum sound to play (e.g., 'HIHAT', 'SNARE')
+   * @param {number} [variant=0] - Sound variant index (0-2)
+   * @returns {AudioBufferSourceNode | null} The created source node or null if failed
+   */
   playSound(drumType: string, variant: number = 0): AudioBufferSourceNode | null {
     if (!this.isInitialized || !this.audioContext || !this.masterGainNode) {
       console.warn('Audio service not initialized')
@@ -172,6 +243,11 @@ class AudioService {
     }
   }
 
+  /**
+   * Set the master volume level for all audio output.
+   *
+   * @param {number} volume - Volume level (0-1)
+   */
   setVolume(volume: number): void {
     this.masterVolume = Math.max(0, Math.min(1, volume))
     if (this.masterGainNode && this.audioContext) {
@@ -179,17 +255,32 @@ class AudioService {
     }
   }
 
+  /**
+   * Get the current master volume level.
+   *
+   * @returns {number} Current volume level (0-1)
+   */
   getVolume(): number {
     return this.masterVolume
   }
 
+  /**
+   * Resume the audio context if it's suspended (required for mobile browsers).
+   *
+   * @async
+   * @returns {Promise<void>} Promise that resolves when audio context is resumed
+   */
   async resume(): Promise<void> {
     if (this.audioContext && this.audioContext.state === 'suspended') {
       await this.audioContext.resume()
     }
   }
 
-  // Loading state management
+  /**
+   * Get the current loading state and progress.
+   *
+   * @returns {{isLoading: boolean, progress: number}} Loading state object
+   */
   getLoadingState(): { isLoading: boolean; progress: number } {
     return {
       isLoading: this.isLoading,
@@ -197,6 +288,12 @@ class AudioService {
     }
   }
 
+  /**
+   * Subscribe to loading progress updates.
+   *
+   * @param {function(number): void} callback - Function to call with progress updates
+   * @returns {function(): void} Unsubscribe function
+   */
   onLoadingProgress(callback: (progress: number) => void): () => void {
     this.loadingCallbacks.push(callback)
     // Return unsubscribe function
@@ -208,35 +305,56 @@ class AudioService {
     }
   }
 
+  /**
+   * Check if the audio service is ready for playback.
+   *
+   * @returns {boolean} True if initialized and not loading
+   */
   isReady(): boolean {
     return this.isInitialized && !this.isLoading
   }
 
-  // Preload sounds immediately when service is created
+  /**
+   * Preload sounds immediately when service is created.
+   *
+   * @async
+   * @returns {Promise<void>} Promise that resolves when preloading is complete
+   */
   async preload(): Promise<void> {
     if (!this.isInitialized) {
       await this.initialize()
     }
   }
 
-  // Stop all currently playing sounds
+  /**
+   * Stop all currently playing sounds and clear the active sources set.
+   */
   stopAllSounds(): void {
     this.activeSources.forEach((source) => {
       try {
         source.stop()
-      } catch (error) {
+      } catch {
         // Source might already be stopped
       }
     })
     this.activeSources.clear()
   }
 
-  // Get count of currently playing sounds
+  /**
+   * Get the count of currently playing sounds.
+   *
+   * @returns {number} Number of active audio sources
+   */
   getActiveSoundCount(): number {
     return this.activeSources.size
   }
 
-  // Check if a specific number of sounds can play simultaneously
+  /**
+   * Check if a specific number of sounds can play simultaneously.
+   *
+   * @param {number} count - Number of sounds to check
+   * @returns {boolean} True if the count is within acceptable limits
+   */
   canPlaySimultaneousSounds(count: number): boolean {
     // Most browsers can handle 32+ simultaneous sounds easily
     // We'll set a reasonable limit of 16 for drum pads
@@ -244,6 +362,11 @@ class AudioService {
   }
 }
 
+/**
+ * Singleton instance of the AudioService.
+ *
+ * @type {AudioService}
+ */
 export const audioService = new AudioService()
 
 // Start preloading immediately when the service is created

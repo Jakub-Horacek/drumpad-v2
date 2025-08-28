@@ -22,17 +22,25 @@
 import { defineComponent, type PropType } from 'vue'
 import type { DrumSample } from '../types'
 
+/**
+ * Individual drum pad tile component.
+ * Displays a single drum with its key code and name.
+ * Handles click and touch events to trigger drum sounds.
+ */
 export default defineComponent({
   name: 'PadTile',
   props: {
+    /** Drum sample data containing ID, name, key code, etc. */
     drum: {
       type: Object as PropType<DrumSample>,
       required: true,
     },
+    /** Whether the pad is currently active (playing) */
     isActive: {
       type: Boolean,
       default: false,
     },
+    /** Whether the pad is disabled (e.g., during audio loading) */
     disabled: {
       type: Boolean,
       default: false,
@@ -40,14 +48,25 @@ export default defineComponent({
   },
   emits: ['play'],
   setup(props, { emit }) {
+    /** @type {number | null} Timeout ID for touch event handling */
     const touchTimeout: number | null = null
 
+    /**
+     * Handle click events on the drum pad.
+     * Emits a 'play' event with the drum ID if not disabled.
+     */
     const handleClick = () => {
       if (!props.disabled) {
         emit('play', props.drum.id)
       }
     }
 
+    /**
+     * Handle touch start events for mobile devices.
+     * Prevents default behavior and triggers drum sound if not disabled.
+     *
+     * @param {TouchEvent} event - The touch start event
+     */
     const handleTouchStart = (event: TouchEvent) => {
       event.preventDefault()
       if (!props.disabled) {
@@ -55,6 +74,12 @@ export default defineComponent({
       }
     }
 
+    /**
+     * Handle touch end events for mobile devices.
+     * Cleans up any pending timeouts.
+     *
+     * @param {TouchEvent} event - The touch end event
+     */
     const handleTouchEnd = (event: TouchEvent) => {
       event.preventDefault()
       if (touchTimeout) {

@@ -27,7 +27,7 @@ TypeScript cannot handle type information for `.vue` imports by default, so we r
 
 See [Vite Configuration Reference](https://vite.dev/config/).
 
-A modern, professional drum pad application built with Vue 3, TypeScript, and Vite. Features a responsive design, advanced audio engine, and recording capabilities.
+A modern, professional drum pad application built with Vue 3, TypeScript, and Vite. Features a responsive design, advanced audio engine, and recording capabilities. The codebase is fully documented with JSDoc comments for excellent developer experience and maintainability.
 
 ## Features
 
@@ -39,6 +39,7 @@ A modern, professional drum pad application built with Vue 3, TypeScript, and Vi
 - ⌨️ **Keyboard Support** - Full keyboard and numpad support
 - 🎛️ **Customizable Settings** - Hi-hat open/close, snare/rimshot toggle, volume control
 - 🚀 **Modern Architecture** - Vue 3 Composition API, Pinia state management, TypeScript
+- 📚 **Comprehensive Documentation** - Full JSDoc documentation for all functions, classes, and components
 
 ## Project Setup
 
@@ -151,6 +152,18 @@ Requires Web Audio API support for optimal experience.
 
 ## Development
 
+### Code Documentation
+
+This project uses **JSDoc** for comprehensive code documentation. All functions, classes, interfaces, and Vue components are documented with:
+
+- Function/class descriptions
+- Parameter types and descriptions
+- Return value documentation
+- Usage examples where helpful
+- Type annotations for better IDE support
+
+The documentation follows modern JSDoc standards and provides excellent developer experience with IntelliSense support in most editors.
+
 ### Adding New Drum Sounds
 
 1. Add audio files to `public/sounds/`
@@ -183,11 +196,9 @@ MIT License - feel free to use this project for personal or commercial purposes.
 
 ## Future Enhancements
 
-- [ ] Pattern sequencer
 - [ ] BPM/metronome
 - [ ] MIDI support
 - [ ] Custom sound upload
 - [ ] Advanced effects (reverb, delay)
-- [ ] Pattern sharing
 - [ ] PWA capabilities
 - [ ] Offline mode

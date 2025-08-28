@@ -6,33 +6,69 @@ import { useConfigStore } from './configStore'
 import type { RecordedEvent, ViewMode, TipItem } from '../types'
 import { TIPS } from '../types'
 
+/**
+ * Main Pinia store for drum pad functionality.
+ * Manages audio playback, recording, keyboard handling, and UI state.
+ * Integrates with AudioService and DebugService for core functionality.
+ *
+ * @returns {Object} Store object with state, computed properties, and actions
+ */
 export const useDrumpadStore = defineStore('drumpad', () => {
   // Use the config store for persistent settings
   const configStore = useConfigStore()
 
+  /** @type {import('vue').Ref<boolean>} Whether recording is currently active */
   const isRecording = ref(false)
+
+  /** @type {import('vue').Ref<boolean>} Whether playback is currently active */
   const isPlaying = ref(false)
+
+  /** @type {import('vue').Ref<RecordedEvent[]>} Array of recorded drum events */
   const recordedEvents = ref<RecordedEvent[]>([])
+
+  /** @type {import('vue').Ref<number>} Timestamp when recording started */
   const recordingStartTime = ref<number>(0)
+
+  /** @type {import('vue').Ref<Set<string>>} Set of currently active pad IDs for visual feedback */
   const activePads = ref<Set<string>>(new Set())
+
+  /** @type {import('vue').Ref<number>} Current tip index for rotating tips */
   const currentTipIndex = ref(0)
+
+  /** @type {import('vue').Ref<boolean>} Whether tips should be displayed */
   const showTips = ref(false)
 
   // Audio loading state
+  /** @type {import('vue').Ref<boolean>} Whether audio is currently loading */
   const isAudioLoading = ref(true)
+
+  /** @type {import('vue').Ref<number>} Audio loading progress (0-100) */
   const audioLoadingProgress = ref(0)
+
+  /** @type {import('vue').Ref<boolean>} Whether audio is ready for playback */
   const isAudioReady = ref(false)
 
   // Debug mode state
+  /** @type {import('vue').Ref<boolean>} Whether debug mode is enabled */
   const isDebugMode = ref(false)
 
   // Computed
+  /** @type {import('vue').ComputedRef<TipItem[]>} Array of all available tips */
   const tips = computed((): TipItem[] => TIPS)
+
+  /** @type {import('vue').ComputedRef<TipItem>} Current tip based on tip index */
   const currentTip = computed((): TipItem => tips.value[currentTipIndex.value])
 
   // Generator for random variants
+  /** @type {Generator<number, never, unknown>} Generator for random drum sound variants */
   const variantGenerator = createVariantGenerator()
 
+  /**
+   * Create a generator that yields random drum sound variants (0-2).
+   *
+   * @generator
+   * @yields {number} Random variant number (0-2)
+   */
   function* createVariantGenerator(): Generator<number, never, unknown> {
     while (true) {
       yield Math.floor(Math.random() * 3)
@@ -40,6 +76,13 @@ export const useDrumpadStore = defineStore('drumpad', () => {
   }
 
   // Actions
+  /**
+   * Initialize the audio service and set up loading progress tracking.
+   * Also initializes the debug service for development tools.
+   *
+   * @async
+   * @returns {Promise<void>} Promise that resolves when initialization is complete
+   */
   async function initializeAudio(): Promise<void> {
     try {
       // Start preloading immediately
@@ -72,6 +115,10 @@ export const useDrumpadStore = defineStore('drumpad', () => {
     }
   }
 
+  /**
+   * Initialize the debug service and inject store functions for global access.
+   * Sets up debug mode change listener and connects debug functions.
+   */
   function initializeDebugService(): void {
     // Set up debug mode change listener
     debugService.onDebugModeChange((isDebug) => {
@@ -84,6 +131,14 @@ export const useDrumpadStore = defineStore('drumpad', () => {
     debugService.setGetActiveSoundCountFunction(getActiveSoundCount)
   }
 
+  /**
+   * Play a drum sound with the specified ID and optional variant.
+   * Handles special cases for hi-hat and snare/rimshot modes.
+   * Records the event if recording is active and provides visual feedback.
+   *
+   * @param {string} drumId - ID of the drum to play
+   * @param {number} [forceVariant] - Optional specific variant to use (0-2)
+   */
   function playDrum(drumId: string, forceVariant?: number): void {
     // Don't play if audio is still loading
     if (!isAudioReady.value) {
@@ -122,14 +177,24 @@ export const useDrumpadStore = defineStore('drumpad', () => {
     }
   }
 
+  /**
+   * Toggle between closed and open hi-hat mode.
+   */
   function toggleHihat(): void {
     configStore.toggleHihat()
   }
 
+  /**
+   * Toggle between snare and rimshot mode.
+   */
   function toggleRimshot(): void {
     configStore.toggleRimshot()
   }
 
+  /**
+   * Start recording drum events.
+   * Clears previous events and sets the start timestamp.
+   */
   function startRecording(): void {
     recordedEvents.value = []
     recordingStartTime.value = Date.now()
@@ -214,6 +279,12 @@ export const useDrumpadStore = defineStore('drumpad', () => {
   }
 
   // Keyboard handling
+  /**
+   * Mapping of keyboard keys to drum IDs.
+   * Supports both regular number keys and numpad keys.
+   *
+   * @type {Record<string, string>}
+   */
   const keyMap: Record<string, string> = {
     '1': 'hihat',
     '2': 'snare',
@@ -235,6 +306,12 @@ export const useDrumpadStore = defineStore('drumpad', () => {
     Numpad9: 'ride',
   }
 
+  /**
+   * Handle keyboard input for drum pad controls.
+   * Maps number keys to drums and special keys to functions.
+   *
+   * @param {KeyboardEvent} event - The keyboard event to handle
+   */
   function handleKeyDown(event: KeyboardEvent): void {
     const drumId = keyMap[event.code] || keyMap[event.key]
 
