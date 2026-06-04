@@ -52,8 +52,8 @@ export const useDrumpadStore = defineStore('drumpad', () => {
     }
   }
 
-  function pulseMetronomeBeatVisual(): void {
-    metronomeBeatNumber.value = (metronomeBeatNumber.value % 4) + 1
+  function pulseMetronomeBeatVisual(beatInMeasure: number): void {
+    metronomeBeatNumber.value = beatInMeasure
     metronomeBeatFlash.value = true
 
     if (metronomeBeatFlashTimer !== null) {
@@ -83,15 +83,23 @@ export const useDrumpadStore = defineStore('drumpad', () => {
   const variantGenerator = createVariantGenerator()
 
   /**
-   * Create a generator that yields random drum sound variants (0-2).
+   * Create a generator that yields random drum sound variants (0–2).
+   *
+   * Uses 0-based indices (not 1–3) so values map directly to preloaded
+   * `AudioBuffer[]` slots in AudioService (`buffers[variant]`) without
+   * off-by-one conversion. Sound files on disk are 1-indexed (_1, _2, _3).
    *
    * @generator
-   * @yields {number} Random variant number (0-2)
+   * @yields {number} Random variant index (0–2)
    */
   function* createVariantGenerator(): Generator<number, never, unknown> {
     while (true) {
-      yield Math.floor(Math.random() * 3)
+      yield Math.floor(Math.random() * audioService.audioVariantsCount)
     }
+  }
+
+  function nextRandomVariant(): number {
+    return variantGenerator.next().value ?? 0
   }
 
   // Actions
@@ -169,7 +177,7 @@ export const useDrumpadStore = defineStore('drumpad', () => {
     }
 
     let soundType = drumId.toUpperCase()
-    const variant = forceVariant ?? variantGenerator.next().value
+    const variant = forceVariant ?? nextRandomVariant()
 
     // Handle special cases
     if (drumId === 'hihat') {

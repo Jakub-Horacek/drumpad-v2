@@ -5,7 +5,7 @@ const SCHEDULE_AHEAD_SEC = 0.1
 const LOOKAHEAD_MS = 25
 export const BEATS_PER_MEASURE = 4
 
-type BeatListener = () => void
+type BeatListener = (beatInMeasure: number) => void
 
 /**
  * Schedules metronome clicks using the shared Web Audio context.
@@ -59,7 +59,7 @@ class MetronomeService {
   /**
    * Subscribe to metronome beats (fired when each click is scheduled).
    *
-   * @param listener - Called for each beat
+   * @param listener - Called with the current beat in the measure (1–BEATS_PER_MEASURE)
    * @returns Unsubscribe function
    */
   onBeat(listener: BeatListener): () => void {
@@ -69,9 +69,9 @@ class MetronomeService {
     }
   }
 
-  private emitBeat(): void {
+  private emitBeat(beatInMeasure: number): void {
     for (const listener of this.beatListeners) {
-      listener()
+      listener(beatInMeasure)
     }
   }
 
@@ -82,7 +82,7 @@ class MetronomeService {
     while (this.nextNoteTime < ctx.currentTime + SCHEDULE_AHEAD_SEC) {
       this.beatInMeasure = (this.beatInMeasure % BEATS_PER_MEASURE) + 1
       audioService.playMetronomeClick(this.nextNoteTime, this.beatInMeasure === 1)
-      this.emitBeat()
+      this.emitBeat(this.beatInMeasure)
       this.nextNoteTime += 60 / this.bpm
     }
   }

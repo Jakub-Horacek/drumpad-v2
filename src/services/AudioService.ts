@@ -18,6 +18,7 @@ class AudioService {
   private loadingCallbacks: Array<(progress: number) => void> = []
   private activeSources: Set<AudioBufferSourceNode> = new Set()
   private masterGainNode: GainNode | null = null
+  private readonly variantsPerSound = 3
 
   /**
    * Initialize the audio context and preload all drum sounds.
@@ -79,7 +80,7 @@ class AudioService {
     ]
 
     // Calculate total sounds for progress tracking
-    this.totalSounds = drumTypes.length * 3
+    this.totalSounds = drumTypes.length * this.variantsPerSound
 
     // Create all promises for parallel loading
     const allPromises: Promise<void>[] = []
@@ -88,7 +89,7 @@ class AudioService {
       const buffers: AudioBuffer[] = []
       this.buffers.set(drumType, buffers)
 
-      for (let i = 1; i <= 3; i++) {
+      for (let i = 1; i <= this.variantsPerSound; i++) {
         const promise = this.loadSound(`/sounds/${drumType}_${i}.mp3`)
           .then((buffer) => {
             buffers[i - 1] = buffer
@@ -250,6 +251,13 @@ class AudioService {
     if (this.audioContext?.state === 'suspended') {
       await this.audioContext.resume()
     }
+  }
+
+  /**
+   * Number of loaded variants per drum sound (e.g. 3 → indices 0–2).
+   */
+  get audioVariantsCount(): number {
+    return this.variantsPerSound
   }
 
   /**
