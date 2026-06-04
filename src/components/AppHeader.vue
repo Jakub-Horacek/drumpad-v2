@@ -90,7 +90,7 @@ export default defineComponent({
 .app-header {
   background: var(--bg-secondary);
   border-bottom: 1px solid var(--border-color);
-  padding: 0 1rem;
+  padding: env(safe-area-inset-top, 0px) 1rem 0;
 }
 
 .app-header__content {

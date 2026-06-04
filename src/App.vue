@@ -46,7 +46,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, onUnmounted } from 'vue'
+import { defineComponent, onMounted, onUnmounted, watch } from 'vue'
+import { applyDocumentTheme } from './themes'
 import { useConfigStore } from './stores/configStore'
 import { useDrumpadStore } from './stores/drumpadStore'
 import AppHeader from './components/AppHeader.vue'
@@ -74,6 +75,12 @@ export default defineComponent({
   setup() {
     const store = useDrumpadStore()
     const configStore = useConfigStore()
+
+    watch(
+      () => store.config.currentTheme,
+      (theme) => applyDocumentTheme(theme),
+      { immediate: true },
+    )
 
     /**
      * Handle keyboard events and pass them to the store.
@@ -114,6 +121,7 @@ export default defineComponent({
 <style scoped>
 #app {
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   background: var(--bg-primary);

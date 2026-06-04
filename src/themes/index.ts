@@ -62,3 +62,24 @@ export const getThemeById = (id: string): ThemeConfig | undefined => {
 export const getDefaultTheme = (): ThemeConfig => {
   return THEMES[0] // Dark theme as default
 }
+
+/** Browser chrome / status bar colors per theme (--bg-primary). */
+export const THEME_BG_COLORS: Record<string, string> = {
+  dark: '#0f0f23',
+  og: '#282828',
+  light: '#ffffff',
+  cyber: '#000000',
+}
+
+/**
+ * Apply the active theme to the document root so html/body and browser UI match.
+ */
+export const applyDocumentTheme = (themeId: string): void => {
+  const id = getThemeById(themeId)?.id ?? 'dark'
+  document.documentElement.className = `theme-${id}`
+  const color = THEME_BG_COLORS[id] ?? THEME_BG_COLORS.dark
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', color)
+  document
+    .querySelector('meta[name="apple-mobile-web-app-status-bar-style"]')
+    ?.setAttribute('content', id === 'light' ? 'default' : 'black-translucent')
+}
