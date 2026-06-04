@@ -12,7 +12,7 @@
 You can find the old project code here: [github.com/Jakub-Horacek/drumpad](https://github.com/Jakub-Horacek/drumpad)  
 It is also being hosted at: [jakub-horacek.github.io/drumpad](https://jakub-horacek.github.io/drumpad/)
 
-This new version, Drumpad 2.0, is built using the Vue 3 framework with TypeScript, bringing the project up to date with modern web development practices. The core idea remains the same: you can play virtual drums by hitting keys, and the app will play corresponding drum sounds. It's a fun and interactive way to experiment with rhythm and sound.
+This new version, Drumpad 2.0, is built using the Vue 3 framework with TypeScript, bringing the project up to date with modern web development practices. The core idea remains the same: you can play virtual drums by hitting keys or clicking pads, and the app plays corresponding drum sounds. It's a fun and interactive way to experiment with rhythm and sound.
 
 > [!NOTE]  
 > Drumpad 2.0 is still in development. Once this version is finished, I will probably archive the old project.
@@ -27,19 +27,20 @@ TypeScript cannot handle type information for `.vue` imports by default, so we r
 
 See [Vite Configuration Reference](https://vite.dev/config/).
 
-A modern, professional drum pad application built with Vue 3, TypeScript, and Vite. Features a responsive design, advanced audio engine, and recording capabilities. The codebase is fully documented with JSDoc comments for excellent developer experience and maintainability.
+A modern drum pad application built with Vue 3, TypeScript, and Vite. Features a numpad-style layout, metronome, recording, separate volume controls, and multiple themes.
 
 ## Features
 
-- 🥁 **9 Different Drum Sounds** - Each with 3 variants for realistic playing
-- 🎵 **Advanced Audio Engine** - Web Audio API for low-latency, high-quality sound
-- 📱 **Responsive Design** - Works perfectly on mobile, tablet, and desktop
-- 🎨 **Multiple Themes** - Dark, light, and cyber themes (extensible)
-- 📹 **Recording & Playback** - Record your beats and play them back
-- ⌨️ **Keyboard Support** - Full keyboard and numpad support
-- 🎛️ **Customizable Settings** - Hi-hat open/close, snare/rimshot toggle, volume control
-- 🚀 **Modern Architecture** - Vue 3 Composition API, Pinia state management, TypeScript
-- 📚 **Comprehensive Documentation** - Full JSDoc documentation for all functions, classes, and components
+- 🥁 **9 drum sounds** — Each with 3 variants for realistic playing
+- 🎵 **Web Audio engine** — Low-latency playback via the Web Audio API
+- ⏱️ **Metronome** — Adjustable BPM (`/` and `*`, hold to step faster), visual beat bar, Space to start/stop
+- 📹 **Recording & playback** — Record beats; playback starts at your first hit (leading silence is trimmed)
+- ⌨️ **Numpad layout** — Grid mirrors a keyboard numpad; full mouse and keyboard support
+- 🎛️ **Drum modes** — Hi-hat open/closed (default closed), snare/rimshot toggles beside the grid
+- 🔊 **Volume mix** — Separate sliders for overall, metronome, and drumpad output
+- 🎨 **Themes** — Dark, light, cyber, and OG
+- 📱 **Responsive UI** — Works on mobile, tablet, and desktop
+- 🚀 **Vue 3 + Pinia + TypeScript** — Persisted settings, documented codebase
 
 ## Project Setup
 
@@ -69,31 +70,48 @@ bun lint
 
 ```
 src/
-├── assets/          # CSS and static assets
-├── components/      # Vue components
-│   ├── DrumPad.vue  # Main drumpad grid
-│   └── PadTile.vue  # Individual drum pad
-├── services/        # Business logic
-│   └── AudioService.ts  # Audio management
-├── stores/          # Pinia stores
-│   └── drumpadStore.ts  # Main application state
-├── types/           # TypeScript type definitions
-│   └── index.ts
-├── App.vue          # Root component
-└── main.ts          # Application entry point
+├── assets/              # Global CSS
+├── components/          # Vue components (DrumPad, Settings, Info, …)
+├── composables/         # Shared composables (e.g. accelerating hold)
+├── services/            # AudioService, MetronomeService, DebugService
+├── stores/              # Pinia stores (drumpad, config)
+├── themes/              # Theme CSS (dark, light, cyber, og)
+├── types/               # TypeScript types and tips
+├── App.vue
+└── main.ts
+public/sounds/           # Drum sample MP3s
 ```
 
 ## Key Controls
 
-### Keyboard Shortcuts
+### Keyboard shortcuts
 
-- `1-9` or `Numpad 1-9` - Play drum sounds
-- `-` or `Numpad -` - Toggle Hi-Hat open/closed
-- `+` or `Numpad +` - Toggle Snare/Rimshot
-- `Space` - Play/pause recording
-- `Shift + Space` - Start/stop recording
+| Key | Action |
+| --- | --- |
+| `1`–`9` / `Numpad 1`–`9` | Play drums |
+| `-` / `Numpad -` | Toggle hi-hat open / closed |
+| `+` / `Numpad +` | Toggle snare / rimshot |
+| `0` / `Numpad 0` | Start / stop recording |
+| `.` / `Numpad .` | Play / stop recording |
+| `Numpad Enter` | Clear recording |
+| `/` / `Numpad /` | Decrease metronome BPM (hold to repeat) |
+| `*` / `Numpad *` | Increase metronome BPM (hold to repeat) |
+| `Space` | Start / stop metronome |
 
-### Drum Layout
+Mouse clicks on pads work the same as number keys. On-screen buttons mirror record, play, clear, metronome, and BPM controls.
+
+### Numpad layout (on-screen grid)
+
+```
+[ / ]    [ BPM ]    [ * ]     ← metronome row
+7        8        9        [−]   ← hi-hat toggle
+4        5        6        [+]   ← snare toggle
+1        2        3     [Enter]  ← clear (tall key)
+[ 0 Record ]  [ . Play ]         ← bottom row
+[ Space — metronome start/stop ]  ← full width below grid
+```
+
+Drum mapping:
 
 ```
 7 - Crash    8 - Splash   9 - Ride
@@ -101,9 +119,24 @@ src/
 1 - Hi-Hat   2 - Snare    3 - Kick
 ```
 
+### Recording
+
+- Press **Record** (`0`) when ready; play your pattern.
+- Stop recording with **Record** again. Timestamps are trimmed so the first drum hit is at 0 ms.
+- **Play** (`.`) starts playback from that first hit, without a long silent intro.
+- **Clear** (`Numpad Enter`) removes the recording.
+
+### Settings
+
+- **Overall volume** — Master output level
+- **Metronome volume** — Click loudness (scaled by overall)
+- **Drumpad volume** — Drum sample loudness (scaled by overall)
+- **Reset volume to defaults** — Sets all three sliders to 70%
+- **Theme** — Dark, light, cyber, or OG
+
 ## Audio Setup
 
-The application uses the Web Audio API for optimal performance. Audio files should be placed in the `public/sounds/` directory with the following naming convention:
+Place samples in `public/sounds/` using this naming convention:
 
 ```
 HIHAT_1.mp3, HIHAT_2.mp3, HIHAT_3.mp3       # Closed hi-hat
@@ -121,17 +154,7 @@ RIDE_1.mp3, RIDE_2.mp3, RIDE_3.mp3          # Ride cymbal
 
 ## Theme System
 
-The application supports multiple themes through CSS custom properties. To add a new theme:
-
-1. Add theme variables in `assets/main.css`
-2. Update the theme selector in the settings
-3. Themes are automatically applied via CSS classes
-
-Current themes:
-
-- **Dark** (default) - Modern dark interface
-- **Light** - Clean light interface (ready for implementation)
-- **Cyber** - Neon cyberpunk style (ready for implementation)
+Themes live in `src/themes/` and are loaded via `src/themes/index.ts`. Each theme defines CSS custom properties (background, accent, metronome colors, etc.). The active theme class is applied on the root app element (`theme-dark`, `theme-light`, `theme-cyber`, `theme-og`).
 
 ## Browser Compatibility
 
@@ -142,63 +165,49 @@ Current themes:
 
 Requires Web Audio API support for optimal experience.
 
-## Performance Optimizations
+## Performance
 
-- **Audio Preloading** - All sounds loaded at startup
-- **Web Audio API** - Low-latency audio processing
-- **Component Lazy Loading** - Efficient memory usage
-- **Modern Build Tools** - Vite for fast development and optimal production builds
-- **Tree Shaking** - Unused code elimination
+- Parallel audio preloading at startup
+- Web Audio API scheduling for metronome clicks
+- Vite production builds with tree shaking
 
 ## Development
 
-### Code Documentation
+### Code documentation
 
-This project uses **JSDoc** for comprehensive code documentation. All functions, classes, interfaces, and Vue components are documented with:
+The project uses JSDoc on services, stores, and major components for IDE hints and maintainability.
 
-- Function/class descriptions
-- Parameter types and descriptions
-- Return value documentation
-- Usage examples where helpful
-- Type annotations for better IDE support
+### Adding new drum sounds
 
-The documentation follows modern JSDoc standards and provides excellent developer experience with IntelliSense support in most editors.
+1. Add MP3 files to `public/sounds/`
+2. Update `DRUM_SAMPLES` in `src/types/index.ts`
+3. Add the type to the preload list in `AudioService.ts`
 
-### Adding New Drum Sounds
+### Adding a new theme
 
-1. Add audio files to `public/sounds/`
-2. Update `DRUM_SAMPLES` in `types/index.ts`
-3. Update the audio service to handle the new sounds
-
-### Adding New Themes
-
-1. Add CSS variables in `assets/main.css`
-2. Update theme selection in settings
-3. Test across all components
+1. Add a CSS file under `src/themes/`
+2. Register it in `src/themes/index.ts`
+3. Add the theme id to the theme selector in Settings
 
 ## Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+4. Submit a pull request
 
 ## License
 
-MIT License - feel free to use this project for personal or commercial purposes.
+MIT License — feel free to use this project for personal or commercial purposes.
 
 ## Credits
 
 - **Developer**: Jakub Horáček
 - **Sounds**: KalacSound
-- **Icons**: Heroicons (conceptual - replace with your preferred icon library)
 
 ## Future Enhancements
 
-- [ ] BPM/metronome
 - [ ] MIDI support
 - [ ] Custom sound upload
 - [ ] Advanced effects (reverb, delay)
-- [ ] PWA capabilities
-- [ ] Offline mode
+- [ ] PWA / offline mode

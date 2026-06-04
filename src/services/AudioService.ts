@@ -11,8 +11,14 @@ class AudioService {
   /** @private Map of drum types to their audio buffers */
   private buffers: Map<string, AudioBuffer[]> = new Map()
 
-  /** @private Master volume level (0-1) */
-  private masterVolume: number = 0.7
+  /** @private Overall output volume (0-1) */
+  private overallVolume: number = 0.7
+
+  /** @private Metronome click volume (0-1) */
+  private metronomeVolume: number = 0.7
+
+  /** @private Drum pad sample volume (0-1) */
+  private drumpadVolume: number = 0.7
 
   /** @private Whether the audio service has been initialized */
   private isInitialized: boolean = false
@@ -60,7 +66,7 @@ class AudioService {
 
       // Create master gain node for better volume control
       this.masterGainNode = this.audioContext.createGain()
-      this.masterGainNode.gain.setValueAtTime(this.masterVolume, this.audioContext.currentTime)
+      this.masterGainNode.gain.setValueAtTime(this.overallVolume, this.audioContext.currentTime)
       this.masterGainNode.connect(this.audioContext.destination)
 
       await this.preloadSounds()
@@ -217,7 +223,7 @@ class AudioService {
 
       source.buffer = buffers[variant]
       // Use immediate value for zero latency
-      gainNode.gain.setValueAtTime(1.0, this.audioContext.currentTime) // Individual volume at 100%
+      gainNode.gain.setValueAtTime(this.drumpadVolume, this.audioContext.currentTime)
 
       // Connect through master gain node for better control
       source.connect(gainNode)
@@ -244,36 +250,63 @@ class AudioService {
   }
 
   /**
-   * Set the master volume level for all audio output.
+   * Set overall, metronome, and drum pad volume levels.
    *
-   * @param {number} volume - Volume level (0-1)
+   * @param {number} overall - Master output volume (0-1)
+   * @param {number} metronome - Metronome click volume (0-1)
+   * @param {number} drumpad - Drum sample volume (0-1)
    */
-  setVolume(volume: number): void {
-    this.masterVolume = Math.max(0, Math.min(1, volume))
+  setVolumes(overall: number, metronome: number, drumpad: number): void {
+    this.overallVolume = clampVolume(overall)
+    this.metronomeVolume = clampVolume(metronome)
+    this.drumpadVolume = clampVolume(drumpad)
     if (this.masterGainNode && this.audioContext) {
-      this.masterGainNode.gain.setValueAtTime(this.masterVolume, this.audioContext.currentTime)
+      this.masterGainNode.gain.setValueAtTime(this.overallVolume, this.audioContext.currentTime)
     }
   }
 
   /**
-   * Get the current master volume level.
-   *
-   * @returns {number} Current volume level (0-1)
-   */
-  getVolume(): number {
-    return this.masterVolume
-  }
-
-  /**
-   * Resume the audio context if it's suspended (required for mobile browsers).
+   * Resume the audio context if the browser suspended it.
    *
    * @async
-   * @returns {Promise<void>} Promise that resolves when audio context is resumed
+   * @returns {Promise<void>}
    */
-  async resume(): Promise<void> {
-    if (this.audioContext && this.audioContext.state === 'suspended') {
+  async resumeContext(): Promise<void> {
+    if (this.audioContext?.state === 'suspended') {
       await this.audioContext.resume()
     }
+  }
+
+  /**
+   * Get the shared audio context used for playback.
+   *
+   * @returns {AudioContext | null}
+   */
+  getAudioContext(): AudioContext | null {
+    return this.audioContext
+  }
+
+  /**
+   * Schedule a short metronome click at the given audio context time.
+   *
+   * @param {number} time - AudioContext time in seconds
+   */
+  playMetronomeClick(time: number): void {
+    if (!this.audioContext || !this.masterGainNode) return
+
+    const ctx = this.audioContext
+    const osc = ctx.createOscillator()
+    const gain = ctx.createGain()
+
+    osc.type = 'square'
+    osc.frequency.setValueAtTime(880, time)
+    gain.gain.setValueAtTime(0.2 * this.metronomeVolume, time)
+    gain.gain.exponentialRampToValueAtTime(0.001, time + 0.04)
+
+    osc.connect(gain)
+    gain.connect(this.masterGainNode)
+    osc.start(time)
+    osc.stop(time + 0.04)
   }
 
   /**
@@ -348,18 +381,6 @@ class AudioService {
   getActiveSoundCount(): number {
     return this.activeSources.size
   }
-
-  /**
-   * Check if a specific number of sounds can play simultaneously.
-   *
-   * @param {number} count - Number of sounds to check
-   * @returns {boolean} True if the count is within acceptable limits
-   */
-  canPlaySimultaneousSounds(count: number): boolean {
-    // Most browsers can handle 32+ simultaneous sounds easily
-    // We'll set a reasonable limit of 16 for drum pads
-    return count <= 16
-  }
 }
 
 /**
@@ -367,6 +388,10 @@ class AudioService {
  *
  * @type {AudioService}
  */
+function clampVolume(volume: number): number {
+  return Math.max(0, Math.min(1, volume))
+}
+
 export const audioService = new AudioService()
 
 // Start preloading immediately when the service is created

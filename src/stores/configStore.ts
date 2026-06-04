@@ -1,6 +1,31 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import type { DrumPadConfig } from '../types'
+import {
+  CONFIG_STORE_VERSION,
+  METRONOME_BPM_DEFAULT,
+  METRONOME_BPM_MAX,
+  METRONOME_BPM_MIN,
+} from '../types'
+
+const DEFAULT_VOLUME = 0.7
+
+function clampVolume(volume: number): number {
+  return Math.max(0, Math.min(1, volume))
+}
+
+type LegacyConfig = DrumPadConfig & { volume?: number }
+
+function resolveVolume(value: unknown, fallback: number): number {
+  if (typeof value === 'number' && !Number.isNaN(value)) {
+    return clampVolume(value)
+  }
+  return fallback
+}
+
+function legacyVolumeFallback(legacy: LegacyConfig): number {
+  return resolveVolume(legacy.volume, DEFAULT_VOLUME)
+}
 
 /**
  * Pinia store for managing drum pad configuration settings.
@@ -17,11 +42,15 @@ export const useConfigStore = defineStore(
      * @type {import('vue').Ref<DrumPadConfig>}
      */
     const config = ref<DrumPadConfig>({
+      configVersion: CONFIG_STORE_VERSION,
       hihatClosed: true,
       useRimshot: false,
-      volume: 0.7,
+      overallVolume: DEFAULT_VOLUME,
+      metronomeVolume: DEFAULT_VOLUME,
+      drumpadVolume: DEFAULT_VOLUME,
       currentTheme: 'dark',
       currentView: 'drumpad',
+      metronomeBpm: METRONOME_BPM_DEFAULT,
     })
 
     /**
@@ -33,13 +62,23 @@ export const useConfigStore = defineStore(
       config.value.currentTheme = theme
     }
 
-    /**
-     * Set the master volume level.
-     *
-     * @param {number} volume - Volume level (0-1)
-     */
-    function setVolume(volume: number): void {
-      config.value.volume = volume
+    function setOverallVolume(volume: number): void {
+      config.value.overallVolume = resolveVolume(volume, DEFAULT_VOLUME)
+    }
+
+    function setMetronomeVolume(volume: number): void {
+      config.value.metronomeVolume = resolveVolume(volume, DEFAULT_VOLUME)
+    }
+
+    function setDrumpadVolume(volume: number): void {
+      config.value.drumpadVolume = resolveVolume(volume, DEFAULT_VOLUME)
+    }
+
+    /** Reset all volume sliders to their default levels (70%). */
+    function resetVolumes(): void {
+      config.value.overallVolume = DEFAULT_VOLUME
+      config.value.metronomeVolume = DEFAULT_VOLUME
+      config.value.drumpadVolume = DEFAULT_VOLUME
     }
 
     /**
@@ -47,8 +86,44 @@ export const useConfigStore = defineStore(
      *
      * @param {DrumPadConfig['currentView']} view - View mode to set
      */
-    function setView(view: DrumPadConfig['currentView']): void {
-      config.value.currentView = view
+    function setView(view: DrumPadConfig['currentView'] | 'guide'): void {
+      config.value.currentView = view === 'guide' ? 'info' : view
+    }
+
+    function normalizeVolumes(): void {
+      const legacy = config.value as LegacyConfig
+      const fallback = legacyVolumeFallback(legacy)
+
+      config.value.overallVolume = resolveVolume(config.value.overallVolume, fallback)
+      config.value.metronomeVolume = resolveVolume(config.value.metronomeVolume, fallback)
+      config.value.drumpadVolume = resolveVolume(config.value.drumpadVolume, fallback)
+
+      if ('volume' in legacy) {
+        delete legacy.volume
+      }
+    }
+
+    function migratePersistedView(): void {
+      normalizeVolumes()
+
+      if ((config.value.currentView as string) === 'guide') {
+        config.value.currentView = 'info'
+      }
+      const version = config.value.configVersion ?? 1
+      if (version < CONFIG_STORE_VERSION) {
+        if (version < 2) {
+          config.value.hihatClosed = true
+        }
+        config.value.configVersion = CONFIG_STORE_VERSION
+      } else if (typeof config.value.hihatClosed !== 'boolean') {
+        config.value.hihatClosed = true
+      }
+      if (
+        typeof config.value.metronomeBpm !== 'number' ||
+        Number.isNaN(config.value.metronomeBpm)
+      ) {
+        config.value.metronomeBpm = METRONOME_BPM_DEFAULT
+      }
     }
 
     /**
@@ -66,28 +141,42 @@ export const useConfigStore = defineStore(
     }
 
     /**
-     * Reset all settings to their default values.
+     * Set metronome tempo in BPM.
+     *
+     * @param {number} bpm - Beats per minute
      */
-    function clearAllSettings(): void {
-      config.value = {
-        hihatClosed: true,
-        useRimshot: false,
-        volume: 0.7,
-        currentTheme: 'dark',
-        currentView: 'drumpad',
-      }
+    function setMetronomeBpm(bpm: number): void {
+      const rounded = Math.round(bpm)
+      config.value.metronomeBpm = Math.min(
+        METRONOME_BPM_MAX,
+        Math.max(METRONOME_BPM_MIN, rounded),
+      )
     }
+
+    const overallVolume = computed(() => config.value.overallVolume)
+    const metronomeVolume = computed(() => config.value.metronomeVolume)
+    const drumpadVolume = computed(() => config.value.drumpadVolume)
+
+    migratePersistedView()
 
     return {
       // State
       config,
+      overallVolume,
+      metronomeVolume,
+      drumpadVolume,
       // Actions
       setTheme,
-      setVolume,
+      setOverallVolume,
+      setMetronomeVolume,
+      setDrumpadVolume,
+      resetVolumes,
       setView,
       toggleHihat,
       toggleRimshot,
-      clearAllSettings,
+      setMetronomeBpm,
+      migratePersistedView,
+      normalizeVolumes,
     }
   },
   {
@@ -98,6 +187,7 @@ export const useConfigStore = defineStore(
     persist: {
       key: 'drumpad-config',
       storage: localStorage,
+      pick: ['config'],
     },
   },
 )

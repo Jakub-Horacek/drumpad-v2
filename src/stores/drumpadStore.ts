@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { audioService } from '../services/AudioService'
 import { debugService } from '../services/DebugService'
+import { metronomeService } from '../services/MetronomeService'
 import { useConfigStore } from './configStore'
 import type { RecordedEvent, ViewMode, TipItem } from '../types'
 import { TIPS } from '../types'
@@ -35,9 +36,6 @@ export const useDrumpadStore = defineStore('drumpad', () => {
   /** @type {import('vue').Ref<number>} Current tip index for rotating tips */
   const currentTipIndex = ref(0)
 
-  /** @type {import('vue').Ref<boolean>} Whether tips should be displayed */
-  const showTips = ref(false)
-
   // Audio loading state
   /** @type {import('vue').Ref<boolean>} Whether audio is currently loading */
   const isAudioLoading = ref(true)
@@ -51,6 +49,43 @@ export const useDrumpadStore = defineStore('drumpad', () => {
   // Debug mode state
   /** @type {import('vue').Ref<boolean>} Whether debug mode is enabled */
   const isDebugMode = ref(false)
+
+  /** @type {import('vue').Ref<boolean>} Whether the metronome is currently running */
+  const isMetronomeRunning = ref(false)
+
+  /** @type {import('vue').Ref<boolean>} True briefly on each metronome beat for UI flash */
+  const metronomeBeatFlash = ref(false)
+
+  /** @type {import('vue').Ref<number>} Current beat in bar (1–4, 0 when stopped) */
+  const metronomeBeatNumber = ref(0)
+
+  let metronomeBeatFlashTimer: ReturnType<typeof setTimeout> | null = null
+
+  metronomeService.setBpm(configStore.config.metronomeBpm)
+
+  function clearMetronomeBeatVisuals(): void {
+    metronomeBeatNumber.value = 0
+    metronomeBeatFlash.value = false
+    if (metronomeBeatFlashTimer !== null) {
+      clearTimeout(metronomeBeatFlashTimer)
+      metronomeBeatFlashTimer = null
+    }
+  }
+
+  function pulseMetronomeBeatVisual(): void {
+    metronomeBeatNumber.value = (metronomeBeatNumber.value % 4) + 1
+    metronomeBeatFlash.value = true
+
+    if (metronomeBeatFlashTimer !== null) {
+      clearTimeout(metronomeBeatFlashTimer)
+    }
+    metronomeBeatFlashTimer = setTimeout(() => {
+      metronomeBeatFlash.value = false
+      metronomeBeatFlashTimer = null
+    }, 280)
+  }
+
+  metronomeService.onBeat(pulseMetronomeBeatVisual)
 
   // Computed
   /** @type {import('vue').ComputedRef<TipItem[]>} Array of all available tips */
@@ -94,6 +129,7 @@ export const useDrumpadStore = defineStore('drumpad', () => {
         if (progress === 100) {
           isAudioLoading.value = false
           isAudioReady.value = true
+          syncVolumesToAudio()
           unsubscribe() // Clean up callback
         }
       })
@@ -104,10 +140,12 @@ export const useDrumpadStore = defineStore('drumpad', () => {
         isAudioLoading.value = false
         isAudioReady.value = true
         audioLoadingProgress.value = 100
+        syncVolumesToAudio()
       }
 
       // Initialize debug service
       initializeDebugService()
+      syncVolumesToAudio()
     } catch (error) {
       console.error('Failed to initialize audio:', error)
       isAudioLoading.value = false
@@ -151,7 +189,7 @@ export const useDrumpadStore = defineStore('drumpad', () => {
 
     // Handle special cases
     if (drumId === 'hihat') {
-      soundType = configStore.config.hihatClosed ? 'HIHAT' : 'HIHAT_O'
+      soundType = configStore.config.hihatClosed !== false ? 'HIHAT' : 'HIHAT_O'
     } else if (drumId === 'snare') {
       soundType = configStore.config.useRimshot ? 'RIMSHOT' : 'SNARE'
     }
@@ -201,8 +239,24 @@ export const useDrumpadStore = defineStore('drumpad', () => {
     isRecording.value = true
   }
 
+  /**
+   * Shift event timestamps so the first hit is at 0 ms (removes leading silence).
+   */
+  function trimRecordingLeadingSilence(): void {
+    if (recordedEvents.value.length === 0) return
+
+    const firstTimestamp = Math.min(...recordedEvents.value.map((e) => e.timestamp))
+    if (firstTimestamp === 0) return
+
+    recordedEvents.value = recordedEvents.value.map((event) => ({
+      ...event,
+      timestamp: event.timestamp - firstTimestamp,
+    }))
+  }
+
   function stopRecording(): void {
     isRecording.value = false
+    trimRecordingLeadingSilence()
   }
 
   function toggleRecording(): void {
@@ -216,20 +270,23 @@ export const useDrumpadStore = defineStore('drumpad', () => {
   async function playRecording(): Promise<void> {
     if (recordedEvents.value.length === 0 || isPlaying.value) return
 
+    const events = recordedEvents.value
+    const playbackOffset = Math.min(...events.map((e) => e.timestamp))
+
     isPlaying.value = true
 
-    for (const event of recordedEvents.value) {
+    for (const event of events) {
+      const delay = event.timestamp - playbackOffset
       setTimeout(() => {
         if (!isPlaying.value) return
         playDrum(event.drumId, event.variant)
-      }, event.timestamp)
+      }, delay)
     }
 
-    // Auto-stop after the longest event
-    const longestEvent = Math.max(...recordedEvents.value.map((e) => e.timestamp))
+    const lastEventTime = Math.max(...events.map((e) => e.timestamp)) - playbackOffset
     setTimeout(() => {
       isPlaying.value = false
-    }, longestEvent + 500)
+    }, lastEventTime + 500)
   }
 
   function stopPlaying(): void {
@@ -249,17 +306,34 @@ export const useDrumpadStore = defineStore('drumpad', () => {
     isPlaying.value = false
   }
 
-  function setVolume(volume: number): void {
-    configStore.setVolume(volume)
-    audioService.setVolume(volume)
+  function syncVolumesToAudio(): void {
+    configStore.normalizeVolumes()
+    const { overallVolume, metronomeVolume, drumpadVolume } = configStore.config
+    audioService.setVolumes(overallVolume, metronomeVolume, drumpadVolume)
+  }
+
+  function setOverallVolume(volume: number): void {
+    configStore.setOverallVolume(volume)
+    syncVolumesToAudio()
+  }
+
+  function setMetronomeVolume(volume: number): void {
+    configStore.setMetronomeVolume(volume)
+    syncVolumesToAudio()
+  }
+
+  function setDrumpadVolume(volume: number): void {
+    configStore.setDrumpadVolume(volume)
+    syncVolumesToAudio()
+  }
+
+  function resetVolumes(): void {
+    configStore.resetVolumes()
+    syncVolumesToAudio()
   }
 
   function setTheme(theme: string): void {
     configStore.setTheme(theme)
-  }
-
-  function clearAllSettings(): void {
-    configStore.clearAllSettings()
   }
 
   function setView(view: ViewMode): void {
@@ -268,10 +342,6 @@ export const useDrumpadStore = defineStore('drumpad', () => {
 
   function nextTip(): void {
     currentTipIndex.value = (currentTipIndex.value + 1) % tips.value.length
-  }
-
-  function toggleTips(): void {
-    showTips.value = !showTips.value
   }
 
   function isPadActive(drumId: string): boolean {
@@ -312,12 +382,55 @@ export const useDrumpadStore = defineStore('drumpad', () => {
    *
    * @param {KeyboardEvent} event - The keyboard event to handle
    */
+  function syncMetronomeRunning(): void {
+    isMetronomeRunning.value = metronomeService.running
+  }
+
+  function setMetronomeBpm(bpm: number): void {
+    configStore.setMetronomeBpm(bpm)
+    metronomeService.setBpm(configStore.config.metronomeBpm)
+  }
+
+  function decreaseMetronomeBpm(): void {
+    setMetronomeBpm(configStore.config.metronomeBpm - 1)
+  }
+
+  function increaseMetronomeBpm(): void {
+    setMetronomeBpm(configStore.config.metronomeBpm + 1)
+  }
+
+  async function toggleMetronome(): Promise<void> {
+    if (!isAudioReady.value) return
+    await metronomeService.toggle()
+    syncMetronomeRunning()
+    if (!metronomeService.running) {
+      clearMetronomeBeatVisuals()
+    }
+  }
+
+  async function stopMetronome(): Promise<void> {
+    metronomeService.stop()
+    clearMetronomeBeatVisuals()
+    syncMetronomeRunning()
+  }
+
   function handleKeyDown(event: KeyboardEvent): void {
+    const target = event.target as HTMLElement
+    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+      return
+    }
+
     const drumId = keyMap[event.code] || keyMap[event.key]
 
     if (drumId) {
       event.preventDefault()
       playDrum(drumId)
+      return
+    }
+
+    if (event.code === 'NumpadEnter') {
+      event.preventDefault()
+      clearRecording()
       return
     }
 
@@ -333,13 +446,29 @@ export const useDrumpadStore = defineStore('drumpad', () => {
         event.preventDefault()
         toggleRimshot()
         break
+      case '0':
+      case 'Numpad0':
+        event.preventDefault()
+        toggleRecording()
+        break
+      case '.':
+      case 'NumpadDecimal':
+        event.preventDefault()
+        togglePlaying()
+        break
+      case '/':
+      case 'NumpadDivide':
+        event.preventDefault()
+        decreaseMetronomeBpm()
+        break
+      case '*':
+      case 'NumpadMultiply':
+        event.preventDefault()
+        increaseMetronomeBpm()
+        break
       case ' ':
         event.preventDefault()
-        if (event.shiftKey) {
-          toggleRecording()
-        } else {
-          togglePlaying()
-        }
+        void toggleMetronome()
         break
     }
   }
@@ -351,10 +480,6 @@ export const useDrumpadStore = defineStore('drumpad', () => {
 
   function getActiveSoundCount(): number {
     return audioService.getActiveSoundCount()
-  }
-
-  function canPlaySimultaneousSounds(count: number): boolean {
-    return audioService.canPlaySimultaneousSounds(count)
   }
 
   // Debug function to play all sounds
@@ -374,12 +499,13 @@ export const useDrumpadStore = defineStore('drumpad', () => {
     isRecording,
     isPlaying,
     recordedEvents,
-    showTips,
     isAudioLoading,
     audioLoadingProgress,
     isAudioReady,
     isDebugMode,
-
+    isMetronomeRunning,
+    metronomeBeatFlash,
+    metronomeBeatNumber,
     // Computed
     currentTip,
 
@@ -391,17 +517,22 @@ export const useDrumpadStore = defineStore('drumpad', () => {
     toggleRecording,
     togglePlaying,
     clearRecording,
-    setVolume,
+    setOverallVolume,
+    setMetronomeVolume,
+    setDrumpadVolume,
+    resetVolumes,
     setTheme,
-    clearAllSettings,
     setView,
     nextTip,
-    toggleTips,
     isPadActive,
     handleKeyDown,
+    setMetronomeBpm,
+    decreaseMetronomeBpm,
+    increaseMetronomeBpm,
+    toggleMetronome,
+    stopMetronome,
     stopAllSounds,
     getActiveSoundCount,
-    canPlaySimultaneousSounds,
     playAllSounds,
   }
 })

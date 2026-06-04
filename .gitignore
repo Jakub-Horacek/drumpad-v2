@@ -28,3 +28,9 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+
+# Emitted config duplicates (source is *.ts)
+vite.config.js
+vite.config.d.ts
+eslint.config.js
+eslint.config.d.ts

@@ -27,11 +27,11 @@ const GridIcon = defineComponent({
   },
 })
 
-const BookIcon = defineComponent({
+const InfoIcon = defineComponent({
   render() {
     return h('svg', { width: '24', height: '24', viewBox: '0 0 24 24', fill: 'currentColor' }, [
       h('path', {
-        d: 'M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z',
+        d: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z',
       }),
     ])
   },
@@ -51,7 +51,7 @@ export default defineComponent({
   name: 'AppNavigation',
   components: {
     GridIcon,
-    BookIcon,
+    InfoIcon,
     SettingsIcon,
   },
   props: {
@@ -63,7 +63,7 @@ export default defineComponent({
   emits: ['view-change'],
   setup() {
     const views = [
-      { id: 'guide' as ViewMode, label: 'Guide', icon: 'BookIcon' },
+      { id: 'info' as ViewMode, label: 'Info', icon: 'InfoIcon' },
       { id: 'drumpad' as ViewMode, label: 'Drumpad', icon: 'GridIcon' },
       { id: 'settings' as ViewMode, label: 'Settings', icon: 'SettingsIcon' },
     ]

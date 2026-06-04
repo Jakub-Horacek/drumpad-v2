@@ -7,18 +7,53 @@
         <h3>Audio Settings</h3>
 
         <div class="setting-item">
-          <label class="setting-label">Volume</label>
+          <label class="setting-label" for="overall-volume">Overall</label>
           <input
+            id="overall-volume"
             type="range"
             min="0"
             max="1"
             step="0.01"
-            :value="volume"
-            @input="handleVolumeChange"
+            :value="overallVolume"
             class="range-input"
+            @input="onOverallVolume"
           />
-          <span class="setting-value">{{ Math.round(volume * 100) }}%</span>
+          <span class="setting-value">{{ percent(overallVolume) }}%</span>
         </div>
+
+        <div class="setting-item">
+          <label class="setting-label" for="metronome-volume">Metronome</label>
+          <input
+            id="metronome-volume"
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            :value="metronomeVolume"
+            class="range-input"
+            @input="onMetronomeVolume"
+          />
+          <span class="setting-value">{{ percent(metronomeVolume) }}%</span>
+        </div>
+
+        <div class="setting-item">
+          <label class="setting-label" for="drumpad-volume">Drumpad</label>
+          <input
+            id="drumpad-volume"
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            :value="drumpadVolume"
+            class="range-input"
+            @input="onDrumpadVolume"
+          />
+          <span class="setting-value">{{ percent(drumpadVolume) }}%</span>
+        </div>
+
+        <button type="button" class="volume-reset-btn" @click="$emit('reset-volumes')">
+          Reset volume to defaults
+        </button>
       </div>
 
       <div class="settings-group">
@@ -32,11 +67,6 @@
           <p class="tip-text">{{ currentTip.text }}</p>
           <button class="tip-btn" @click="$emit('next-tip')">Next Tip</button>
         </div>
-      </div>
-
-      <div class="settings-credits">
-        <p>Created by <a href="https://callmehillman.com" target="_blank">Jakub Horáček</a></p>
-        <p>Sounds by <a href="https://www.instagram.com/kalacsound/" target="_blank">KalacSound</a></p>
       </div>
     </div>
   </div>
@@ -52,7 +82,15 @@ export default defineComponent({
     ThemeSelector,
   },
   props: {
-    volume: {
+    overallVolume: {
+      type: Number,
+      required: true,
+    },
+    metronomeVolume: {
+      type: Number,
+      required: true,
+    },
+    drumpadVolume: {
       type: Number,
       required: true,
     },
@@ -65,11 +103,34 @@ export default defineComponent({
       required: true,
     },
   },
-  emits: ['volume-change', 'theme-change', 'next-tip'],
+  emits: [
+    'overall-volume-change',
+    'metronome-volume-change',
+    'drumpad-volume-change',
+    'reset-volumes',
+    'theme-change',
+    'next-tip',
+  ],
   setup(_, { emit }) {
-    const handleVolumeChange = (event: Event) => {
-      const target = event.target as HTMLInputElement
-      emit('volume-change', parseFloat(target.value))
+    const percent = (value: number) => {
+      if (typeof value !== 'number' || Number.isNaN(value)) {
+        return 70
+      }
+      return Math.round(value * 100)
+    }
+
+    const parseVolume = (event: Event) => parseFloat((event.target as HTMLInputElement).value)
+
+    const onOverallVolume = (event: Event) => {
+      emit('overall-volume-change', parseVolume(event))
+    }
+
+    const onMetronomeVolume = (event: Event) => {
+      emit('metronome-volume-change', parseVolume(event))
+    }
+
+    const onDrumpadVolume = (event: Event) => {
+      emit('drumpad-volume-change', parseVolume(event))
     }
 
     const handleThemeChange = (themeId: string) => {
@@ -77,7 +138,10 @@ export default defineComponent({
     }
 
     return {
-      handleVolumeChange,
+      percent,
+      onOverallVolume,
+      onMetronomeVolume,
+      onDrumpadVolume,
       handleThemeChange,
     }
   },
@@ -131,7 +195,7 @@ export default defineComponent({
 }
 
 .setting-label {
-  min-width: 4rem;
+  min-width: 5.5rem;
   font-weight: 500;
 }
 
@@ -161,6 +225,25 @@ export default defineComponent({
   color: var(--accent-color);
 }
 
+.volume-reset-btn {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.volume-reset-btn:hover {
+  background: var(--bg-quaternary, var(--bg-tertiary));
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
 .tip-display {
   background: var(--bg-tertiary);
   border-radius: 0.5rem;
@@ -180,26 +263,6 @@ export default defineComponent({
   border-radius: 0.25rem;
   cursor: pointer;
   font-size: 0.875rem;
-}
-
-.settings-credits {
-  text-align: center;
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-  padding: 1rem 0 0.5rem;
-}
-
-.settings-credits p {
-  margin: 0.25rem 0;
-}
-
-.settings-credits a {
-  color: var(--accent-color);
-  text-decoration: none;
-}
-
-.settings-credits a:hover {
-  text-decoration: underline;
 }
 
 /* Desktop styles */

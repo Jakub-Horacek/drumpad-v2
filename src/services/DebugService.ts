@@ -49,9 +49,9 @@ class DebugService {
         disableDebugMode: () => this.disableDebugMode(),
         toggleDebugMode: () => this.toggleDebugMode(),
         isDebugMode: () => this.isDebugMode,
-        playAllSounds: () => this.playAllSounds(),
-        stopAllSounds: () => this.stopAllSounds(),
-        getActiveSoundCount: () => this.getActiveSoundCount(),
+        playAllSounds: () => console.warn('🎵 Debug: playAllSounds not initialized yet'),
+        stopAllSounds: () => console.warn('🎵 Debug: stopAllSounds not initialized yet'),
+        getActiveSoundCount: () => 0,
         help: () => this.showHelp(),
       }
     }
@@ -149,41 +149,6 @@ __DRUMPAD_DEBUG__.playAllSounds()
    */
   private notifyCallbacks(): void {
     this.debugCallbacks.forEach((callback) => callback(this.isDebugMode))
-  }
-
-  /**
-   * Debug function to play all sounds (placeholder implementation).
-   * The actual implementation will be injected by the store.
-   *
-   * @private
-   */
-  private playAllSounds(): void {
-    // This will be implemented by connecting to the drumpad store
-    console.log('🎵 Playing all sounds...')
-    // The actual implementation will be injected by the store
-  }
-
-  /**
-   * Debug function to stop all sounds (placeholder implementation).
-   * The actual implementation will be injected by the store.
-   *
-   * @private
-   */
-  private stopAllSounds(): void {
-    console.log('🎵 Stopping all sounds...')
-    // The actual implementation will be injected by the store
-  }
-
-  /**
-   * Debug function to get active sound count (placeholder implementation).
-   * The actual implementation will be injected by the store.
-   *
-   * @private
-   * @returns {number} Placeholder return value of 0
-   */
-  private getActiveSoundCount(): number {
-    console.log('🎵 Getting active sound count...')
-    return 0 // The actual implementation will be injected by the store
   }
 
   /**

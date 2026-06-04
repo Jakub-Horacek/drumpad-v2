@@ -1,192 +1,102 @@
 <template>
-  <div class="view drumpad-view">
-    <DrumPad />
+  <div class="drumpad-view">
+    <div class="drumpad-view__center">
+      <p class="drumpad-view__hint">Click with your mouse, or play with your numpad</p>
+      <DrumPad />
+    </div>
 
-    <!-- Recording Controls -->
-    <div class="controls">
+    <div v-if="isDebugMode" class="controls">
       <button
-        :class="['control-btn', 'control-btn--record', { 'control-btn--active': isRecording }]"
+        class="control-btn control-btn--stop"
         :disabled="!isAudioReady"
-        @click="$emit('toggle-recording')"
+        @click="$emit('stop-all-sounds')"
       >
-        <RecordIcon class="control-btn__icon" />
-        {{ isRecording ? 'Stop Recording' : 'Record' }}
+        <StopIcon class="control-btn__icon" />
+        Stop All
       </button>
 
       <button
-        :class="['control-btn', 'control-btn--play']"
-        :disabled="recordedEvents.length === 0 || !isAudioReady"
-        @click="$emit('toggle-playing')"
+        class="control-btn control-btn--debug"
+        :disabled="!isAudioReady"
+        @click="$emit('play-all-sounds')"
       >
-        <component :is="isPlaying ? PauseIcon : PlayIcon" class="control-btn__icon" />
-        {{ isPlaying ? 'Stop' : 'Play' }}
+        <PlayAllIcon class="control-btn__icon" />
+        Play All
       </button>
-
-      <button
-        class="control-btn control-btn--clear"
-        :disabled="recordedEvents.length === 0 || !isAudioReady"
-        @click="$emit('clear-recording')"
-      >
-        <TrashIcon class="control-btn__icon" />
-        Clear
-      </button>
-
-      <!-- Debug buttons - only visible in debug mode -->
-      <template v-if="isDebugMode">
-        <button
-          class="control-btn control-btn--stop"
-          :disabled="!isAudioReady"
-          @click="$emit('stop-all-sounds')"
-        >
-          <StopIcon class="control-btn__icon" />
-          Stop All
-        </button>
-
-        <button
-          class="control-btn control-btn--debug"
-          :disabled="!isAudioReady"
-          @click="$emit('play-all-sounds')"
-        >
-          <PlayAllIcon class="control-btn__icon" />
-          Play All
-        </button>
-      </template>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, h } from 'vue'
+import { defineComponent } from 'vue'
 import DrumPad from './DrumPad.vue'
+import { PlayAllIcon, StopIcon } from './ControlIcons'
 
-// Icon components
-/** Play icon component */
-const PlayIcon = defineComponent({
-  render() {
-    return h('svg', { width: '24', height: '24', viewBox: '0 0 24 24', fill: 'currentColor' }, [
-      h('path', { d: 'M8 5v14l11-7z' }),
-    ])
-  },
-})
-
-/** Pause icon component */
-const PauseIcon = defineComponent({
-  render() {
-    return h('svg', { width: '24', height: '24', viewBox: '0 0 24 24', fill: 'currentColor' }, [
-      h('path', { d: 'M6 19h4V5H6v14zm8-14v14h4V5h-4z' }),
-    ])
-  },
-})
-
-/** Record icon component */
-const RecordIcon = defineComponent({
-  render() {
-    return h('svg', { width: '24', height: '24', viewBox: '0 0 24 24', fill: 'currentColor' }, [
-      h('circle', { cx: '12', cy: '12', r: '8' }),
-    ])
-  },
-})
-
-/** Trash/delete icon component */
-const TrashIcon = defineComponent({
-  render() {
-    return h('svg', { width: '24', height: '24', viewBox: '0 0 24 24', fill: 'currentColor' }, [
-      h('path', {
-        d: 'M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z',
-      }),
-    ])
-  },
-})
-
-/** Stop icon component */
-const StopIcon = defineComponent({
-  render() {
-    return h('svg', { width: '24', height: '24', viewBox: '0 0 24 24', fill: 'currentColor' }, [
-      h('path', { d: 'M6 6h12v12H6z' }),
-    ])
-  },
-})
-
-/** Play all sounds icon component */
-const PlayAllIcon = defineComponent({
-  render() {
-    return h('svg', { width: '24', height: '24', viewBox: '0 0 24 24', fill: 'currentColor' }, [
-      h('path', { d: 'M8 5v14l11-7z' }),
-      h('path', { d: 'M2 5v14l11-7z', opacity: '0.5' }),
-    ])
-  },
-})
-
-/**
- * Main drum pad view component.
- * Contains the drum pad grid and recording/playback controls.
- * Includes debug controls that are only visible in debug mode.
- */
 export default defineComponent({
   name: 'DrumpadView',
   components: {
     DrumPad,
-    RecordIcon,
-    PlayIcon,
-    PauseIcon,
-    TrashIcon,
     StopIcon,
     PlayAllIcon,
   },
   props: {
-    /** Whether recording is currently active */
-    isRecording: {
-      type: Boolean,
-      required: true,
-    },
-    /** Whether playback is currently active */
-    isPlaying: {
-      type: Boolean,
-      required: true,
-    },
-    /** Array of recorded drum events */
-    recordedEvents: {
-      type: Array,
-      required: true,
-    },
-    /** Whether audio is ready for playback */
     isAudioReady: {
       type: Boolean,
       required: true,
     },
-    /** Whether debug mode is enabled */
     isDebugMode: {
       type: Boolean,
       required: true,
     },
   },
-  emits: [
-    'toggle-recording',
-    'toggle-playing',
-    'clear-recording',
-    'stop-all-sounds',
-    'play-all-sounds',
-  ],
-  setup() {
-    return {
-      PlayIcon,
-      PauseIcon,
-      RecordIcon,
-      TrashIcon,
-      StopIcon,
-      PlayAllIcon,
-    }
-  },
+  emits: ['stop-all-sounds', 'play-all-sounds'],
 })
 </script>
 
 <style scoped>
-.view {
-  min-height: calc(100vh - 8rem);
-  padding: 1rem;
+.drumpad-view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 0;
 }
 
-/* Controls */
+.drumpad-view__center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem;
+  width: 100%;
+}
+
+.drumpad-view__hint {
+  margin: 0;
+  max-width: 500px;
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+@media (min-width: 768px) {
+  .drumpad-view__hint {
+    max-width: 600px;
+    font-size: 0.95rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .drumpad-view__hint {
+    max-width: 720px;
+    font-size: 1rem;
+  }
+}
+
 .controls {
   display: flex;
   justify-content: center;
@@ -219,12 +129,6 @@ export default defineComponent({
   cursor: not-allowed;
 }
 
-.control-btn--record.control-btn--active {
-  background: var(--danger-color);
-  border-color: var(--danger-color);
-  color: white;
-}
-
 .control-btn--stop {
   background: var(--warning-color, #f59e0b);
   border-color: var(--warning-color, #f59e0b);
@@ -252,10 +156,4 @@ export default defineComponent({
   height: 1rem;
 }
 
-/* Desktop styles */
-@media (min-width: 768px) {
-  .view {
-    min-height: calc(100vh - 5rem);
-  }
-}
 </style>

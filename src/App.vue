@@ -11,20 +11,14 @@
 
     <!-- Main Content -->
     <main class="app-main" :class="{ 'app-main--loading': store.isAudioLoading }">
-      <!-- Guide View -->
-      <GuideView v-if="store.config.currentView === 'guide'" />
+      <!-- Info View -->
+      <InfoView v-if="store.config.currentView === 'info'" />
 
       <!-- Drumpad View -->
       <DrumpadView
         v-if="store.config.currentView === 'drumpad'"
-        :is-recording="store.isRecording"
-        :is-playing="store.isPlaying"
-        :recorded-events="store.recordedEvents"
         :is-audio-ready="store.isAudioReady"
         :is-debug-mode="store.isDebugMode"
-        @toggle-recording="store.toggleRecording"
-        @toggle-playing="store.togglePlaying"
-        @clear-recording="store.clearRecording"
         @stop-all-sounds="store.stopAllSounds"
         @play-all-sounds="store.playAllSounds"
       />
@@ -32,10 +26,15 @@
       <!-- Settings View -->
       <SettingsView
         v-if="store.config.currentView === 'settings'"
-        :volume="store.config.volume"
+        :overall-volume="configStore.overallVolume"
+        :metronome-volume="configStore.metronomeVolume"
+        :drumpad-volume="configStore.drumpadVolume"
         :current-theme="store.config.currentTheme"
         :current-tip="store.currentTip"
-        @volume-change="store.setVolume"
+        @overall-volume-change="store.setOverallVolume"
+        @metronome-volume-change="store.setMetronomeVolume"
+        @drumpad-volume-change="store.setDrumpadVolume"
+        @reset-volumes="store.resetVolumes"
         @theme-change="store.setTheme"
         @next-tip="store.nextTip"
       />
@@ -48,9 +47,10 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted } from 'vue'
+import { useConfigStore } from './stores/configStore'
 import { useDrumpadStore } from './stores/drumpadStore'
 import AppHeader from './components/AppHeader.vue'
-import GuideView from './components/GuideView.vue'
+import InfoView from './components/InfoView.vue'
 import DrumpadView from './components/DrumpadView.vue'
 import SettingsView from './components/SettingsView.vue'
 import AppNavigation from './components/AppNavigation.vue'
@@ -65,7 +65,7 @@ export default defineComponent({
   name: 'App',
   components: {
     AppHeader,
-    GuideView,
+    InfoView,
     DrumpadView,
     SettingsView,
     AppNavigation,
@@ -73,6 +73,7 @@ export default defineComponent({
   },
   setup() {
     const store = useDrumpadStore()
+    const configStore = useConfigStore()
 
     /**
      * Handle keyboard events and pass them to the store.
@@ -84,6 +85,7 @@ export default defineComponent({
     }
 
     onMounted(async () => {
+      configStore.normalizeVolumes()
       await store.initializeAudio()
       window.addEventListener('keydown', handleKeyDown)
 
@@ -103,6 +105,7 @@ export default defineComponent({
 
     return {
       store,
+      configStore,
     }
   },
 })
@@ -120,6 +123,9 @@ export default defineComponent({
 /* Main Content */
 .app-main {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
   overflow-y: auto;
   transition: opacity 0.3s ease;
 }

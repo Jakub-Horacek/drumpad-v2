@@ -7,8 +7,6 @@ export interface DrumSample {
   id: string
   /** Display name of the drum */
   name: string
-  /** Number of sound variants available (typically 3) */
-  variants: number
   /** Keyboard key code for triggering this drum */
   keyCode: string
   /** Position in the drum pad grid (1-9) */
@@ -32,23 +30,43 @@ export interface RecordedEvent {
  * Interface representing the drum pad configuration settings.
  * Contains all user-configurable options with persistence.
  */
+/** Bumped when persisted config shape or defaults change */
+export const CONFIG_STORE_VERSION = 3
+
 export interface DrumPadConfig {
+  /** Persisted config schema version (for migrations) */
+  configVersion?: number
   /** Whether hi-hat is in closed mode (true) or open mode (false) */
   hihatClosed: boolean
   /** Whether to use rimshot (true) or normal snare (false) */
   useRimshot: boolean
-  /** Master volume level (0-1) */
-  volume: number
+  /** Overall output volume (0-1) */
+  overallVolume: number
+  /** Metronome click volume (0-1), scaled by overall */
+  metronomeVolume: number
+  /** Drum pad sample volume (0-1), scaled by overall */
+  drumpadVolume: number
   /** Current theme name */
   currentTheme: string
   /** Current view mode */
   currentView: ViewMode
+  /** Metronome tempo in beats per minute */
+  metronomeBpm: number
 }
+
+/** Minimum metronome BPM */
+export const METRONOME_BPM_MIN = 40
+
+/** Maximum metronome BPM */
+export const METRONOME_BPM_MAX = 300
+
+/** Default metronome BPM */
+export const METRONOME_BPM_DEFAULT = 120
 
 /**
  * Union type for available view modes in the application.
  */
-export type ViewMode = 'drumpad' | 'guide' | 'settings'
+export type ViewMode = 'drumpad' | 'info' | 'settings'
 
 /**
  * Interface representing a tip item for the help system.
@@ -67,15 +85,15 @@ export interface TipItem {
  * Each drum has 3 variants for realistic sound variation.
  */
 export const DRUM_SAMPLES: DrumSample[] = [
-  { id: 'hihat', name: 'Hi-Hat', variants: 3, keyCode: '1', position: 7 },
-  { id: 'snare', name: 'Snare', variants: 3, keyCode: '2', position: 8 },
-  { id: 'kick', name: 'Kick', variants: 3, keyCode: '3', position: 9 },
-  { id: 'tom1', name: 'Tom 1', variants: 3, keyCode: '4', position: 4 },
-  { id: 'tom2', name: 'Tom 2', variants: 3, keyCode: '5', position: 5 },
-  { id: 'floor', name: 'Floor Tom', variants: 3, keyCode: '6', position: 6 },
-  { id: 'crash', name: 'Crash', variants: 3, keyCode: '7', position: 1 },
-  { id: 'splash', name: 'Splash', variants: 3, keyCode: '8', position: 2 },
-  { id: 'ride', name: 'Ride', variants: 3, keyCode: '9', position: 3 },
+  { id: 'hihat', name: 'Hi-Hat', keyCode: '1', position: 7 },
+  { id: 'snare', name: 'Snare', keyCode: '2', position: 8 },
+  { id: 'kick', name: 'Kick', keyCode: '3', position: 9 },
+  { id: 'tom1', name: 'Tom 1', keyCode: '4', position: 4 },
+  { id: 'tom2', name: 'Tom 2', keyCode: '5', position: 5 },
+  { id: 'floor', name: 'Floor Tom', keyCode: '6', position: 6 },
+  { id: 'crash', name: 'Crash', keyCode: '7', position: 1 },
+  { id: 'splash', name: 'Splash', keyCode: '8', position: 2 },
+  { id: 'ride', name: 'Ride', keyCode: '9', position: 3 },
 ]
 
 /**
@@ -83,12 +101,20 @@ export const DRUM_SAMPLES: DrumSample[] = [
  * Rotates through these tips to help users learn the application features.
  */
 export const TIPS: TipItem[] = [
-  { id: 1, text: 'Use numeric keypad for best experience' },
-  { id: 2, text: 'Press - to toggle between closed/open hi-hat' },
-  { id: 3, text: 'Press + to toggle between snare and rimshot' },
-  { id: 4, text: 'Turn up your volume for better sound experience' },
-  { id: 5, text: 'Use headphones for optimal audio quality' },
-  { id: 6, text: 'Try recording and playing back your beats!' },
-  { id: 7, text: 'Each drum has 3 different sound variants for realism' },
-  { id: 8, text: 'Multiple pads can play at the same time - create complex beats!' },
+  { id: 1, text: 'Click pads with your mouse, or use Numpad 1–9 to play drums' },
+  { id: 2, text: 'The top row is the metronome: / and * change BPM; hold them to step faster' },
+  { id: 3, text: 'Press Space to start or stop the metronome — watch the beat dots pulse' },
+  { id: 4, text: 'Press − or Numpad − to toggle hi-hat open/closed (default is closed)' },
+  { id: 5, text: 'Press + or Numpad + to toggle snare/rimshot' },
+  { id: 6, text: 'Press 0 or Numpad 0 to start/stop recording' },
+  { id: 7, text: 'Press . or Numpad . to play/stop a recording' },
+  { id: 8, text: 'Press Numpad Enter to clear a recording' },
+  { id: 9, text: 'Playback starts at your first drum hit, not when you pressed Record' },
+  { id: 10, text: 'Record, play, and clear buttons sit below the bottom drum row' },
+  { id: 11, text: 'Each drum has 3 sound variants for a more natural feel' },
+  { id: 12, text: 'Hit multiple pads at once to layer your beats' },
+  { id: 13, text: 'Settings has separate sliders for overall, metronome, and drumpad volume' },
+  { id: 14, text: 'Use “Reset volume to defaults” in Settings to restore all sliders to 70%' },
+  { id: 15, text: 'Pick a theme in Settings — dark, light, cyber, or OG' },
+  { id: 16, text: 'See all controls and credits on the Info page' },
 ]

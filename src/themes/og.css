@@ -20,6 +20,11 @@
   --border-color: #4a4a4a;
   --border-color-light: #5a5a5a;
 
+  --metro-bg: #424242;
+  --metro-bg-hover: #4a4a4a;
+  --metro-border: #555555;
+  --metro-inset-bg: #383838;
+
   --pad-bg: #363636;
   --pad-bg-hover: #404040;
   --pad-bg-active: #f5a623;
