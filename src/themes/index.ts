@@ -8,7 +8,12 @@ import './ocean.css'
 
 import { applyThemeFavicon } from './favicon'
 
-export { applyThemeFavicon, buildThemeFaviconSvg, THEME_FAVICON_PALETTES } from './favicon'
+export {
+  applyThemeFavicon,
+  buildThemeFaviconSvg,
+  getThemeFaviconDataUrl,
+  THEME_FAVICON_PALETTES,
+} from './favicon'
 
 /**
  * Interface representing a theme configuration.

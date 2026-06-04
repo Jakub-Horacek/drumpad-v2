@@ -2,6 +2,14 @@
   <header class="app-header">
     <div class="app-header__content">
       <h1 class="app-title">
+        <img
+          :src="faviconSrc"
+          alt=""
+          class="app-title__favicon"
+          width="32"
+          height="32"
+          aria-hidden="true"
+        />
         <span class="app-title__main">Drumpad</span>
         <span class="app-title__pro">2.0</span>
       </h1>
@@ -23,7 +31,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, h } from 'vue'
+import { computed, defineComponent, h } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useConfigStore } from '../stores/configStore'
+import { getThemeFaviconDataUrl } from '../themes/favicon'
 import type { ViewMode } from '../types'
 
 // Icon components
@@ -72,6 +83,11 @@ export default defineComponent({
   },
   emits: ['view-change'],
   setup() {
+    const configStore = useConfigStore()
+    const { config } = storeToRefs(configStore)
+
+    const faviconSrc = computed(() => getThemeFaviconDataUrl(config.value.currentTheme))
+
     const views = [
       { id: 'info' as ViewMode, label: 'Info', icon: 'InfoIcon' },
       { id: 'drumpad' as ViewMode, label: 'Drumpad', icon: 'GridIcon' },
@@ -79,6 +95,7 @@ export default defineComponent({
     ]
 
     return {
+      faviconSrc,
       views,
     }
   },
@@ -108,6 +125,13 @@ export default defineComponent({
   gap: 0.5rem;
   margin: 0;
   font-family: var(--font-primary);
+}
+
+.app-title__favicon {
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+  border-radius: 0.375rem;
 }
 
 .app-title__main {

@@ -56,14 +56,18 @@ export function buildThemeFaviconSvg(themeId: string): string {
   ].join('')
 }
 
+/** Data URL for inline use (header logo, `<img>`, etc.). */
+export function getThemeFaviconDataUrl(themeId: string): string {
+  return `data:image/svg+xml,${encodeURIComponent(buildThemeFaviconSvg(themeId))}`
+}
+
 const FAVICON_LINK_ID = 'app-favicon'
 
 /**
  * Update the document favicon to match the active theme.
  */
 export function applyThemeFavicon(themeId: string): void {
-  const svg = buildThemeFaviconSvg(themeId)
-  const href = `data:image/svg+xml,${encodeURIComponent(svg)}`
+  const href = getThemeFaviconDataUrl(themeId)
 
   let link = document.getElementById(FAVICON_LINK_ID) as HTMLLinkElement | null
   if (!link) {
