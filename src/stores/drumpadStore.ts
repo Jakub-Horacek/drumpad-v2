@@ -1,11 +1,12 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { audioService } from '../services/AudioService'
 import { debugService } from '../services/DebugService'
 import { metronomeService } from '../services/MetronomeService'
 import { useConfigStore } from './configStore'
 import type { RecordedEvent, ViewMode, TipItem } from '../types'
-import { TIPS } from '../types'
+import { TIPS_POINTER, TIPS_TOUCH } from '../types'
+import { useTouchPrimaryDevice } from '../composables/useTouchPrimaryDevice'
 
 /**
  * Main Pinia store for drum pad functionality.
@@ -35,6 +36,8 @@ export const useDrumpadStore = defineStore('drumpad', () => {
 
   /** @type {import('vue').Ref<number>} Current tip index for rotating tips */
   const currentTipIndex = ref(0)
+
+  const { isTouchPrimary } = useTouchPrimaryDevice()
 
   // Audio loading state
   /** @type {import('vue').Ref<boolean>} Whether audio is currently loading */
@@ -88,11 +91,20 @@ export const useDrumpadStore = defineStore('drumpad', () => {
   metronomeService.onBeat(pulseMetronomeBeatVisual)
 
   // Computed
-  /** @type {import('vue').ComputedRef<TipItem[]>} Array of all available tips */
-  const tips = computed((): TipItem[] => TIPS)
+  /** @type {import('vue').ComputedRef<TipItem[]>} Tips for the active input device */
+  const tips = computed((): TipItem[] =>
+    isTouchPrimary.value ? TIPS_TOUCH : TIPS_POINTER,
+  )
 
   /** @type {import('vue').ComputedRef<TipItem>} Current tip based on tip index */
-  const currentTip = computed((): TipItem => tips.value[currentTipIndex.value])
+  const currentTip = computed((): TipItem => {
+    const list = tips.value
+    return list[currentTipIndex.value % list.length]
+  })
+
+  watch(isTouchPrimary, () => {
+    currentTipIndex.value = 0
+  })
 
   // Generator for random variants
   /** @type {Generator<number, never, unknown>} Generator for random drum sound variants */

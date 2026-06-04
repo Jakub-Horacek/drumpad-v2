@@ -311,3 +311,14 @@ button:focus {
     display: none;
   }
 }
+
+/* Touch-primary devices (phones/tablets): hide keyboard key hints.
+   Must match TOUCH_PRIMARY_MEDIA_QUERY in useTouchPrimaryDevice.ts */
+@media (hover: none) and (pointer: coarse) {
+  .drum-toggle__symbol:not(.drum-toggle__metro-icon),
+  .drum-toggle__spacebar,
+  .pad-tile__key,
+  .drum-toggle--enter .drum-toggle__state {
+    display: none !important;
+  }
+}

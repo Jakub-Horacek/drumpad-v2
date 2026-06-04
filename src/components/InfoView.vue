@@ -5,7 +5,7 @@
 
       <section class="info-section">
         <h3 class="info-section__title">Controls</h3>
-        <ul class="info-list">
+        <ul v-if="!isTouchPrimary" class="info-list">
           <li><kbd>−</kbd> / <kbd>Numpad −</kbd> — Hi-hat open / closed</li>
           <li><kbd>+</kbd> / <kbd>Numpad +</kbd> — Snare / rimshot</li>
           <li><kbd>0</kbd> / <kbd>Numpad 0</kbd> — Start / stop recording</li>
@@ -14,9 +14,25 @@
           <li><kbd>/</kbd> / <kbd>Numpad /</kbd> — Decrease metronome BPM</li>
           <li><kbd>*</kbd> / <kbd>Numpad *</kbd> — Increase metronome BPM</li>
           <li><kbd>Space</kbd> — Start / stop metronome</li>
+          <li><kbd>Numpad 1–9</kbd> — Play drums (matches pad layout)</li>
         </ul>
-        <p class="info-section__note">
+        <ul v-else class="info-list">
+          <li>Drum pads — tap to play</li>
+          <li>Hi-Hat — toggle open / closed</li>
+          <li>Snare — toggle normal / rimshot</li>
+          <li>Record — start / stop recording</li>
+          <li>Play — play / stop recording</li>
+          <li>Clear — clear recording</li>
+          <li>BPM − / + — decrease / increase tempo (hold to repeat)</li>
+          <li>Tempo field — type a BPM value directly</li>
+          <li>Metronome — start / stop</li>
+        </ul>
+        <p v-if="!isTouchPrimary" class="info-section__note">
           Record, play, and clear are also available as on-screen buttons below the drum row.
+        </p>
+        <p v-else class="info-section__note">
+          Hi-Hat and Snare toggles sit on the right; Record, Play, and Clear are below the bottom
+          drum row.
         </p>
       </section>
 
@@ -57,9 +73,14 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { useTouchPrimaryDevice } from '../composables/useTouchPrimaryDevice'
 
 export default defineComponent({
   name: 'InfoView',
+  setup() {
+    const { isTouchPrimary } = useTouchPrimaryDevice()
+    return { isTouchPrimary }
+  },
 })
 </script>
 
