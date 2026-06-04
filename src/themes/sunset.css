@@ -1,0 +1,38 @@
+/* Sunset Theme */
+.theme-sunset {
+  --bg-primary: #1c1218;
+  --bg-secondary: #2a1a22;
+  --bg-tertiary: #3d2430;
+  --bg-quaternary: #140e12;
+
+  --text-primary: #fff5f0;
+  --text-secondary: #f0c4b8;
+  --text-tertiary: #b88a7e;
+
+  --accent-color: #ff6b4a;
+  --accent-color-light: rgba(255, 107, 74, 0.12);
+  --accent-color-dark: #e85d4c;
+
+  --success-color: #34d399;
+  --warning-color: #fbbf24;
+  --danger-color: #f87171;
+
+  --border-color: #4a3038;
+  --border-color-light: #5c3d48;
+
+  --metro-bg: #322028;
+  --metro-bg-hover: #3d2832;
+  --metro-border: #5c3d48;
+  --metro-inset-bg: #140e12;
+
+  --pad-bg: linear-gradient(135deg, #3d2430 0%, #2a1a22 100%);
+  --pad-bg-hover: linear-gradient(135deg, #4a3038 0%, #3d2430 100%);
+  --pad-bg-active: linear-gradient(135deg, #ff6b4a 0%, #e85d4c 100%);
+
+  --pad-border: #4a3038;
+  --pad-border-hover: #5c3d48;
+  --pad-border-active: #ff6b4a;
+
+  --pad-text: #fff5f0;
+  --pad-text-secondary: #d4a090;
+}

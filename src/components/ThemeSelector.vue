@@ -153,6 +153,22 @@ export default defineComponent({
   background: #ff0080;
 }
 
+.theme-option__preview--sunset .theme-option__preview-bg {
+  background: #1c1218;
+}
+
+.theme-option__preview--sunset .theme-option__preview-accent {
+  background: #ff6b4a;
+}
+
+.theme-option__preview--ocean .theme-option__preview-bg {
+  background: #041c2c;
+}
+
+.theme-option__preview--ocean .theme-option__preview-accent {
+  background: #14b8a6;
+}
+
 .theme-option__name {
   font-size: 0.75rem;
   font-weight: 500;
@@ -168,7 +184,7 @@ export default defineComponent({
 /* Responsive adjustments */
 @media (min-width: 768px) {
   .theme-selector__options {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 
   .theme-option {

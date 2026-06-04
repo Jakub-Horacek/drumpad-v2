@@ -1,0 +1,38 @@
+/* Ocean Theme */
+.theme-ocean {
+  --bg-primary: #041c2c;
+  --bg-secondary: #0a2a3f;
+  --bg-tertiary: #0f3549;
+  --bg-quaternary: #061824;
+
+  --text-primary: #e0f7fa;
+  --text-secondary: #80deea;
+  --text-tertiary: #4db6ac;
+
+  --accent-color: #14b8a6;
+  --accent-color-light: rgba(20, 184, 166, 0.12);
+  --accent-color-dark: #0d9488;
+
+  --success-color: #2dd4bf;
+  --warning-color: #fbbf24;
+  --danger-color: #f87171;
+
+  --border-color: #1a4a5c;
+  --border-color-light: #25637a;
+
+  --metro-bg: #0c3044;
+  --metro-bg-hover: #103a52;
+  --metro-border: #1a5a6e;
+  --metro-inset-bg: #061824;
+
+  --pad-bg: linear-gradient(135deg, #0f3549 0%, #0a2a3f 100%);
+  --pad-bg-hover: linear-gradient(135deg, #154a62 0%, #0f3549 100%);
+  --pad-bg-active: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+
+  --pad-border: #1a4a5c;
+  --pad-border-hover: #25637a;
+  --pad-border-active: #14b8a6;
+
+  --pad-text: #e0f7fa;
+  --pad-text-secondary: #4dd0e1;
+}

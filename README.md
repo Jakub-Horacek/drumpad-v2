@@ -38,7 +38,7 @@ A modern drum pad application built with Vue 3, TypeScript, and Vite. Features a
 - ⌨️ **Numpad layout** — Grid mirrors a keyboard numpad; full mouse and keyboard support
 - 🎛️ **Drum modes** — Hi-hat open/closed (default closed), snare/rimshot toggles beside the grid
 - 🔊 **Volume mix** — Separate sliders for overall, metronome, and drumpad output
-- 🎨 **Themes** — Dark, light, cyber, and OG
+- 🎨 **Themes** — Dark, light, cyber, OG, sunset, and ocean (theme-colored favicon)
 - 📱 **Responsive UI** — Works on mobile, tablet, and desktop
 - 🚀 **Vue 3 + Pinia + TypeScript** — Persisted settings, documented codebase
 
@@ -75,11 +75,14 @@ src/
 ├── composables/         # Shared composables (e.g. accelerating hold)
 ├── services/            # AudioService, MetronomeService, DebugService
 ├── stores/              # Pinia stores (drumpad, config)
-├── themes/              # Theme CSS (dark, light, cyber, og)
+├── themes/              # Theme CSS, registry, and favicon generator
 ├── types/               # TypeScript types and tips
 ├── App.vue
 └── main.ts
-public/sounds/           # Drum sample MP3s
+public/
+├── sounds/              # Drum sample MP3s
+├── favicon.svg          # Default favicon (dark theme)
+└── favicons/            # Per-theme SVG favicons (dark, light, …)
 ```
 
 ## Key Controls
@@ -132,7 +135,7 @@ Drum mapping:
 - **Metronome volume** — Click loudness (scaled by overall)
 - **Drumpad volume** — Drum sample loudness (scaled by overall)
 - **Reset volume to defaults** — Sets all three sliders to 70%
-- **Theme** — Dark, light, cyber, or OG
+- **Theme** — Dark, light, cyber, OG, sunset, or ocean
 
 ## Audio Setup
 
@@ -154,7 +157,36 @@ RIDE_1.mp3, RIDE_2.mp3, RIDE_3.mp3          # Ride cymbal
 
 ## Theme System
 
-Themes live in `src/themes/` and are loaded via `src/themes/index.ts`. Each theme defines CSS custom properties (background, accent, metronome colors, etc.). The active theme class is applied on the root app element (`theme-dark`, `theme-light`, `theme-cyber`, `theme-og`).
+Themes live in `src/themes/` and are registered in `src/themes/index.ts`. Each theme is a CSS file that defines custom properties (background, accent, metronome colors, pad styles, etc.). The active theme class is applied on the document root and app container (`theme-dark`, `theme-light`, `theme-cyber`, `theme-og`, `theme-sunset`, `theme-ocean`).
+
+| Theme | Description |
+| --- | --- |
+| **Dark** | Default dark theme with blue accents |
+| **Light** | Clean light theme with blue accents |
+| **Cyber** | Cyberpunk neon green and pink |
+| **OG** | Original screenshot gray and orange |
+| **Sunset** | Warm dusk tones with coral accents |
+| **Ocean** | Deep sea blues with teal accents |
+
+Changing the theme updates browser UI chrome (`theme-color` meta tag) and the favicon.
+
+### Favicons
+
+Each theme has a matching SVG favicon: a simple **3×3 pad grid** (same layout as the numpad drums) with some pads filled (accent color) and others outline-only. Favicons are generated in `src/themes/favicon.ts` and applied at runtime when the theme changes via `applyDocumentTheme()`.
+
+Static copies live in `public/favicons/<theme-id>.svg` for reference and first paint; `public/favicon.svg` is the default (dark). Regenerate them after editing palettes:
+
+```sh
+bun -e "
+import { writeFileSync, mkdirSync } from 'fs';
+import { buildThemeFaviconSvg, THEME_FAVICON_PALETTES } from './src/themes/favicon.ts';
+mkdirSync('public/favicons', { recursive: true });
+for (const id of Object.keys(THEME_FAVICON_PALETTES)) {
+  writeFileSync('public/favicons/' + id + '.svg', buildThemeFaviconSvg(id));
+}
+writeFileSync('public/favicon.svg', buildThemeFaviconSvg('dark'));
+"
+```
 
 ## Browser Compatibility
 
@@ -185,9 +217,10 @@ The project uses JSDoc on services, stores, and major components for IDE hints a
 
 ### Adding a new theme
 
-1. Add a CSS file under `src/themes/`
-2. Register it in `src/themes/index.ts`
-3. Add the theme id to the theme selector in Settings
+1. Add a CSS file under `src/themes/` (e.g. `mytheme.css` with a `.theme-mytheme` class)
+2. Import the CSS and register the theme in `src/themes/index.ts` (`THEMES`, `THEME_BG_COLORS`)
+3. Add preview swatch styles in `src/components/ThemeSelector.vue`
+4. Add a palette in `src/themes/favicon.ts` (`THEME_FAVICON_PALETTES`) and regenerate `public/favicons/` (see [Favicons](#favicons))
 
 ## Contributing
 

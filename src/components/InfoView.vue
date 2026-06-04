@@ -36,6 +36,51 @@
         </p>
       </section>
 
+      <section class="info-section info-section--legacy">
+        <h3 class="info-section__title">History</h3>
+        <p class="info-legacy__text">
+          <strong>Drumpad 2.0</strong> is a modern rebuild of my first JavaScript project from high
+          school — created between December 2018 and April 2019 as my
+          <em>Klauzurní Práce</em> (final project). The core idea is unchanged: play virtual drums
+          with keys or on-screen pads and hear matching sounds.
+        </p>
+        <p class="info-legacy__text">
+          The original version still runs today. It was plain JavaScript without Vue or TypeScript;
+          this app brings the same concept up to date with Vue 3, TypeScript, a metronome,
+          recording, themes, and more.
+        </p>
+        <aside class="info-legacy__warning" role="note">
+          <p class="info-legacy__warning-title">Fair warning</p>
+          <p class="info-legacy__warning-text">
+            The old Drumpad still works, but it is far from ideal — buggy corners, outdated
+            patterns, and code I am genuinely ashamed of. Open it for nostalgia or curiosity, not
+            because you expect something polished.
+          </p>
+        </aside>
+        <div class="info-legacy__actions">
+          <a
+            class="info-legacy__link"
+            :href="LEGACY_DRUMPAD_URL"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Try the original Drumpad
+          </a>
+          <a
+            class="info-legacy__link info-legacy__link--secondary"
+            :href="LEGACY_REPO_URL"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View source on GitHub
+          </a>
+        </div>
+        <p class="info-section__note">
+          Once Drumpad 2.0 is finished, the old project will likely be archived — try it while it is
+          still live.
+        </p>
+      </section>
+
       <section class="info-section info-section--mobile">
         <h3 class="info-section__title">Mobile App</h3>
         <p class="info-mobile__text">
@@ -66,6 +111,16 @@
             <span class="info-credit-card__name">KalacSound</span>
           </a>
         </div>
+        <p class="info-credits__curious">Curious how this project was done?</p>
+        <a
+          class="info-credit-card info-credit-card--source"
+          :href="SOURCE_REPO_URL"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span class="info-credit-card__role">Source code</span>
+          <span class="info-credit-card__name">View on GitHub</span>
+        </a>
       </section>
     </div>
   </div>
@@ -75,11 +130,20 @@
 import { defineComponent } from 'vue'
 import { useTouchPrimaryDevice } from '../composables/useTouchPrimaryDevice'
 
+const LEGACY_DRUMPAD_URL = 'https://jakub-horacek.github.io/drumpad/'
+const LEGACY_REPO_URL = 'https://github.com/Jakub-Horacek/drumpad'
+const SOURCE_REPO_URL = 'https://github.com/Jakub-Horacek/drumpad-v2'
+
 export default defineComponent({
   name: 'InfoView',
   setup() {
     const { isTouchPrimary } = useTouchPrimaryDevice()
-    return { isTouchPrimary }
+    return {
+      isTouchPrimary,
+      LEGACY_DRUMPAD_URL,
+      LEGACY_REPO_URL,
+      SOURCE_REPO_URL,
+    }
   },
 })
 </script>
@@ -124,6 +188,85 @@ export default defineComponent({
   line-height: 1.5;
   font-size: 0.875rem;
   opacity: 0.9;
+}
+
+.info-legacy__text {
+  margin: 0 0 0.75rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  font-size: 0.9375rem;
+}
+
+.info-legacy__text:last-of-type {
+  margin-bottom: 1rem;
+}
+
+.info-legacy__text strong {
+  color: var(--text-primary);
+}
+
+.info-legacy__warning {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--danger-color);
+  background: color-mix(in srgb, var(--danger-color) 12%, var(--bg-tertiary));
+}
+
+.info-legacy__warning-title {
+  margin: 0 0 0.35rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--danger-color);
+}
+
+.info-legacy__warning-text {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.info-legacy__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.info-legacy__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.625rem 1rem;
+  background: var(--accent-color);
+  color: white;
+  border-radius: 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    background 0.2s,
+    transform 0.2s;
+}
+
+.info-legacy__link:hover {
+  background: var(--accent-color-dark, #e67a2e);
+  transform: translateY(-1px);
+}
+
+.info-legacy__link--secondary {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.info-legacy__link--secondary:hover {
+  background: var(--bg-quaternary, var(--bg-tertiary));
+  border-color: var(--accent-color);
+  color: var(--accent-color);
 }
 
 .info-mobile__text {
@@ -195,6 +338,20 @@ kbd {
   display: grid;
   grid-template-columns: 1fr;
   gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.info-credits__curious {
+  margin: 0 0 0.5rem;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+
+.info-credit-card--source {
+  max-width: 20rem;
+  margin: 0 auto;
 }
 
 .info-credit-card {
@@ -240,6 +397,16 @@ kbd {
 
   .info-credits__grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .info-legacy__actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .info-legacy__link {
+    flex: 1;
+    min-width: 12rem;
   }
 }
 </style>

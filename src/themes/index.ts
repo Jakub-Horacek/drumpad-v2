@@ -3,6 +3,12 @@ import './dark.css'
 import './og.css'
 import './light.css'
 import './cyber.css'
+import './sunset.css'
+import './ocean.css'
+
+import { applyThemeFavicon } from './favicon'
+
+export { applyThemeFavicon, buildThemeFaviconSvg, THEME_FAVICON_PALETTES } from './favicon'
 
 /**
  * Interface representing a theme configuration.
@@ -42,6 +48,16 @@ export const THEMES: ThemeConfig[] = [
     name: 'Cyber',
     description: 'Futuristic cyberpunk theme with neon colors',
   },
+  {
+    id: 'sunset',
+    name: 'Sunset',
+    description: 'Warm dusk tones with coral accents',
+  },
+  {
+    id: 'ocean',
+    name: 'Ocean',
+    description: 'Deep sea blues with teal accents',
+  },
 ]
 
 /**
@@ -69,6 +85,8 @@ export const THEME_BG_COLORS: Record<string, string> = {
   og: '#282828',
   light: '#ffffff',
   cyber: '#000000',
+  sunset: '#1c1218',
+  ocean: '#041c2c',
 }
 
 /**
@@ -82,4 +100,6 @@ export const applyDocumentTheme = (themeId: string): void => {
   document
     .querySelector('meta[name="apple-mobile-web-app-status-bar-style"]')
     ?.setAttribute('content', id === 'light' ? 'default' : 'black-translucent')
+
+  applyThemeFavicon(id)
 }
