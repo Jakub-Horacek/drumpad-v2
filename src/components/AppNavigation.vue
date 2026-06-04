@@ -79,9 +79,15 @@ export default defineComponent({
 /* Mobile Navigation */
 .mobile-nav {
   display: flex;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
   background: var(--bg-secondary);
   border-top: 1px solid var(--border-color);
   padding: 0.75rem;
+  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
   gap: 0.25rem;
 }
 

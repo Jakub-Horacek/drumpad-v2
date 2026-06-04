@@ -33,6 +33,11 @@
           <button class="tip-btn" @click="$emit('next-tip')">Next Tip</button>
         </div>
       </div>
+
+      <div class="settings-credits">
+        <p>Created by <a href="https://callmehillman.com" target="_blank">Jakub Horáček</a></p>
+        <p>Sounds by <a href="https://www.instagram.com/kalacsound/" target="_blank">KalacSound</a></p>
+      </div>
     </div>
   </div>
 </template>
@@ -175,6 +180,26 @@ export default defineComponent({
   border-radius: 0.25rem;
   cursor: pointer;
   font-size: 0.875rem;
+}
+
+.settings-credits {
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  padding: 1rem 0 0.5rem;
+}
+
+.settings-credits p {
+  margin: 0.25rem 0;
+}
+
+.settings-credits a {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+.settings-credits a:hover {
+  text-decoration: underline;
 }
 
 /* Desktop styles */

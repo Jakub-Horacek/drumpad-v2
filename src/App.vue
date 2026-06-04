@@ -43,9 +43,6 @@
 
     <!-- Mobile Navigation -->
     <AppNavigation :current-view="store.config.currentView" @view-change="store.setView" />
-
-    <!-- Footer -->
-    <AppFooter />
   </div>
 </template>
 
@@ -57,7 +54,6 @@ import GuideView from './components/GuideView.vue'
 import DrumpadView from './components/DrumpadView.vue'
 import SettingsView from './components/SettingsView.vue'
 import AppNavigation from './components/AppNavigation.vue'
-import AppFooter from './components/AppFooter.vue'
 import AudioLoadingOverlay from './components/AudioLoadingOverlay.vue'
 
 /**
@@ -73,7 +69,6 @@ export default defineComponent({
     DrumpadView,
     SettingsView,
     AppNavigation,
-    AppFooter,
     AudioLoadingOverlay,
   },
   setup() {
@@ -132,5 +127,11 @@ export default defineComponent({
 .app-main--loading {
   opacity: 0.3;
   pointer-events: none;
+}
+
+@media (max-width: 767px) {
+  #app {
+    padding-bottom: calc(4.75rem + env(safe-area-inset-bottom, 0px));
+  }
 }
 </style>
