@@ -93,6 +93,15 @@ body {
   min-height: 100dvh;
 }
 
+@media (max-width: 767px) {
+  html,
+  body {
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
+  }
+}
+
 body {
   font-family: var(--font-primary);
   background: var(--bg-primary);

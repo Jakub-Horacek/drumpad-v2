@@ -128,6 +128,14 @@ export default defineComponent({
   color: var(--text-primary);
 }
 
+@media (max-width: 767px) {
+  #app {
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
+  }
+}
+
 /* Main Content */
 .app-main {
   flex: 1;
@@ -135,17 +143,12 @@ export default defineComponent({
   flex-direction: column;
   min-height: 0;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   transition: opacity 0.3s ease;
 }
 
 .app-main--loading {
   opacity: 0.3;
   pointer-events: none;
-}
-
-@media (max-width: 767px) {
-  #app {
-    padding-bottom: calc(4.75rem + env(safe-area-inset-bottom, 0px));
-  }
 }
 </style>
