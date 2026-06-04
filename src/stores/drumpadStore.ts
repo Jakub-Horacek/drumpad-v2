@@ -18,50 +18,27 @@ import { useTouchPrimaryDevice } from '../composables/useTouchPrimaryDevice'
 export const useDrumpadStore = defineStore('drumpad', () => {
   // Use the config store for persistent settings
   const configStore = useConfigStore()
-
-  /** @type {import('vue').Ref<boolean>} Whether recording is currently active */
   const isRecording = ref(false)
-
-  /** @type {import('vue').Ref<boolean>} Whether playback is currently active */
   const isPlaying = ref(false)
-
-  /** @type {import('vue').Ref<RecordedEvent[]>} Array of recorded drum events */
   const recordedEvents = ref<RecordedEvent[]>([])
-
-  /** @type {import('vue').Ref<number>} Timestamp when recording started */
   const recordingStartTime = ref<number>(0)
 
-  /** @type {import('vue').Ref<Set<string>>} Set of currently active pad IDs for visual feedback */
   const activePads = ref<Set<string>>(new Set())
-
-  /** @type {import('vue').Ref<number>} Current tip index for rotating tips */
   const currentTipIndex = ref(0)
 
   const { isTouchPrimary } = useTouchPrimaryDevice()
 
   // Audio loading state
-  /** @type {import('vue').Ref<boolean>} Whether audio is currently loading */
   const isAudioLoading = ref(true)
-
-  /** @type {import('vue').Ref<number>} Audio loading progress (0-100) */
   const audioLoadingProgress = ref(0)
-
-  /** @type {import('vue').Ref<boolean>} Whether audio is ready for playback */
   const isAudioReady = ref(false)
 
   // Debug mode state
-  /** @type {import('vue').Ref<boolean>} Whether debug mode is enabled */
   const isDebugMode = ref(false)
-
-  /** @type {import('vue').Ref<boolean>} Whether the metronome is currently running */
   const isMetronomeRunning = ref(false)
 
-  /** @type {import('vue').Ref<boolean>} True briefly on each metronome beat for UI flash */
   const metronomeBeatFlash = ref(false)
-
-  /** @type {import('vue').Ref<number>} Current beat in bar (1–4, 0 when stopped) */
   const metronomeBeatNumber = ref(0)
-
   let metronomeBeatFlashTimer: ReturnType<typeof setTimeout> | null = null
 
   metronomeService.setBpm(configStore.config.metronomeBpm)
@@ -91,12 +68,8 @@ export const useDrumpadStore = defineStore('drumpad', () => {
   metronomeService.onBeat(pulseMetronomeBeatVisual)
 
   // Computed
-  /** @type {import('vue').ComputedRef<TipItem[]>} Tips for the active input device */
-  const tips = computed((): TipItem[] =>
-    isTouchPrimary.value ? TIPS_TOUCH : TIPS_POINTER,
-  )
+  const tips = computed((): TipItem[] => (isTouchPrimary.value ? TIPS_TOUCH : TIPS_POINTER))
 
-  /** @type {import('vue').ComputedRef<TipItem>} Current tip based on tip index */
   const currentTip = computed((): TipItem => {
     const list = tips.value
     return list[currentTipIndex.value % list.length]
@@ -107,7 +80,6 @@ export const useDrumpadStore = defineStore('drumpad', () => {
   })
 
   // Generator for random variants
-  /** @type {Generator<number, never, unknown>} Generator for random drum sound variants */
   const variantGenerator = createVariantGenerator()
 
   /**

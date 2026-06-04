@@ -14,7 +14,7 @@
         class="metro-beat-bar__strike"
       />
       <span
-        v-for="beat in 4"
+        v-for="beat in BEATS_PER_MEASURE"
         :key="beat"
         class="metro-beat-bar__dot"
         :class="{ 'metro-beat-bar__dot--on': metronomeBeatNumber === beat }"
@@ -214,6 +214,7 @@ import { defineComponent, computed, onUnmounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useDrumpadStore } from '../stores/drumpadStore'
 import { DRUM_SAMPLES, METRONOME_BPM_MAX, METRONOME_BPM_MIN } from '../types'
+import { BEATS_PER_MEASURE } from '../services/MetronomeService'
 import PadTile from './PadTile.vue'
 import { useAcceleratingHold } from '../composables/useAcceleratingHold'
 
@@ -276,6 +277,7 @@ export default defineComponent({
       bpmIncreaseHold,
       METRONOME_BPM_MIN,
       METRONOME_BPM_MAX,
+      BEATS_PER_MEASURE,
     }
   },
 })

@@ -3,6 +3,7 @@ import { METRONOME_BPM_MAX, METRONOME_BPM_MIN } from '../types'
 
 const SCHEDULE_AHEAD_SEC = 0.1
 const LOOKAHEAD_MS = 25
+export const BEATS_PER_MEASURE = 4
 
 type BeatListener = () => void
 
@@ -15,6 +16,7 @@ class MetronomeService {
   private nextNoteTime = 0
   private timerId: ReturnType<typeof setInterval> | null = null
   private beatListeners = new Set<BeatListener>()
+  private beatInMeasure = 0
 
   get running(): boolean {
     return this.isRunning
@@ -32,6 +34,7 @@ class MetronomeService {
     if (!ctx) return
 
     this.isRunning = true
+    this.beatInMeasure = 0
     this.nextNoteTime = ctx.currentTime + 0.05
     this.timerId = setInterval(() => this.scheduler(), LOOKAHEAD_MS)
   }
@@ -42,6 +45,7 @@ class MetronomeService {
       this.timerId = null
     }
     this.isRunning = false
+    this.beatInMeasure = 0
   }
 
   async toggle(): Promise<void> {
@@ -76,7 +80,8 @@ class MetronomeService {
     if (!ctx || !this.isRunning) return
 
     while (this.nextNoteTime < ctx.currentTime + SCHEDULE_AHEAD_SEC) {
-      audioService.playMetronomeClick(this.nextNoteTime)
+      this.beatInMeasure = (this.beatInMeasure % BEATS_PER_MEASURE) + 1
+      audioService.playMetronomeClick(this.nextNoteTime, this.beatInMeasure === 1)
       this.emitBeat()
       this.nextNoteTime += 60 / this.bpm
     }

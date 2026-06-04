@@ -5,43 +5,18 @@
  * @class AudioService
  */
 class AudioService {
-  /** @private Audio context for sound processing */
   private audioContext: AudioContext | null = null
-
-  /** @private Map of drum types to their audio buffers */
   private buffers: Map<string, AudioBuffer[]> = new Map()
-
-  /** @private Overall output volume (0-1) */
   private overallVolume: number = 0.7
-
-  /** @private Metronome click volume (0-1) */
   private metronomeVolume: number = 0.7
-
-  /** @private Drum pad sample volume (0-1) */
   private drumpadVolume: number = 0.7
-
-  /** @private Whether the audio service has been initialized */
   private isInitialized: boolean = false
-
-  /** @private Whether sounds are currently being loaded */
   private isLoading: boolean = false
-
-  /** @private Loading progress percentage (0-100) */
   private loadingProgress: number = 0
-
-  /** @private Total number of sounds to load */
   private totalSounds: number = 0
-
-  /** @private Number of sounds loaded so far */
   private loadedSounds: number = 0
-
-  /** @private Callbacks for loading progress updates */
   private loadingCallbacks: Array<(progress: number) => void> = []
-
-  /** @private Set of currently active audio sources */
   private activeSources: Set<AudioBufferSourceNode> = new Set()
-
-  /** @private Master gain node for volume control */
   private masterGainNode: GainNode | null = null
 
   /**
@@ -290,8 +265,9 @@ class AudioService {
    * Schedule a short metronome click at the given audio context time.
    *
    * @param {number} time - AudioContext time in seconds
+   * @param {boolean} [accent=false] - Downbeat (1/4) uses a higher pitch
    */
-  playMetronomeClick(time: number): void {
+  playMetronomeClick(time: number, accent = false): void {
     if (!this.audioContext || !this.masterGainNode) return
 
     const ctx = this.audioContext
@@ -299,7 +275,7 @@ class AudioService {
     const gain = ctx.createGain()
 
     osc.type = 'square'
-    osc.frequency.setValueAtTime(880, time)
+    osc.frequency.setValueAtTime(accent ? 1100 : 880, time)
     gain.gain.setValueAtTime(0.2 * this.metronomeVolume, time)
     gain.gain.exponentialRampToValueAtTime(0.001, time + 0.04)
 
