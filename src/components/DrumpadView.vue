@@ -1,7 +1,13 @@
 <template>
   <div class="drumpad-view">
     <div class="drumpad-view__center">
-      <p class="drumpad-view__hint">Click with your mouse, or play with your numpad</p>
+      <p class="drumpad-view__hint">
+        {{
+          isTouchPrimary
+            ? 'Tap the pads to play drums'
+            : 'Click with your mouse, or play with your numpad'
+        }}
+      </p>
       <DrumPad />
     </div>
 
@@ -31,6 +37,7 @@
 import { defineComponent } from 'vue'
 import DrumPad from './DrumPad.vue'
 import { PlayAllIcon, StopIcon } from './ControlIcons'
+import { useTouchPrimaryDevice } from '../composables/useTouchPrimaryDevice'
 
 export default defineComponent({
   name: 'DrumpadView',
@@ -38,6 +45,10 @@ export default defineComponent({
     DrumPad,
     StopIcon,
     PlayAllIcon,
+  },
+  setup() {
+    const { isTouchPrimary } = useTouchPrimaryDevice()
+    return { isTouchPrimary }
   },
   props: {
     isAudioReady: {
@@ -94,6 +105,28 @@ export default defineComponent({
   .drumpad-view__hint {
     max-width: 720px;
     font-size: 1rem;
+  }
+}
+
+/* Mobile resolution or touch-primary: fill available screen for the drumpad */
+@media (max-width: 767px), (hover: none) and (pointer: coarse) {
+  .drumpad-view {
+    overflow: hidden;
+  }
+
+  .drumpad-view__center {
+    justify-content: flex-start;
+    padding: 0.5rem 0.75rem;
+    padding-left: max(0.75rem, env(safe-area-inset-left, 0px));
+    padding-right: max(0.75rem, env(safe-area-inset-right, 0px));
+    gap: 0.5rem;
+    min-height: 0;
+  }
+
+  .drumpad-view__hint {
+    max-width: none;
+    flex-shrink: 0;
+    font-size: 0.8rem;
   }
 }
 

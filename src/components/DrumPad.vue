@@ -622,13 +622,15 @@ export default defineComponent({
 .drum-toggle--minus {
   grid-row: 2;
   grid-column: 4;
-  align-self: center;
+  align-self: stretch;
+  min-height: 0;
 }
 
 .drum-toggle--plus {
   grid-row: 3;
   grid-column: 4;
-  align-self: center;
+  align-self: stretch;
+  min-height: 0;
 }
 
 .drum-toggle--enter {
@@ -750,6 +752,33 @@ export default defineComponent({
   grid-template-columns: repeat(3, 1fr) minmax(3.75rem, 0.42fr);
   grid-template-rows: minmax(52px, auto) repeat(3, minmax(80px, 1fr)) minmax(44px, auto);
   gap: 12px;
+}
+
+/* Mobile resolution or touch-primary: expand drumpad to fill available space */
+@media (max-width: 767px), (hover: none) and (pointer: coarse) {
+  .drumpad {
+    flex: 1;
+    max-width: none;
+    width: 100%;
+    min-height: 0;
+    padding: 0.5rem;
+    gap: 8px;
+  }
+
+  .metro-beat-bar {
+    flex-shrink: 0;
+  }
+
+  .drumpad__grid {
+    flex: 1;
+    min-height: 0;
+    gap: 8px;
+    grid-template-rows: minmax(40px, auto) repeat(3, minmax(0, 1fr)) minmax(36px, auto);
+  }
+
+  .drum-toggle {
+    min-height: 0;
+  }
 }
 
 @media (min-width: 768px) {

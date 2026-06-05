@@ -128,7 +128,7 @@ export default defineComponent({
   color: var(--text-primary);
 }
 
-@media (max-width: 767px) {
+@media (max-width: 767px), (hover: none) and (pointer: coarse) {
   #app {
     height: 100dvh;
     max-height: 100dvh;
