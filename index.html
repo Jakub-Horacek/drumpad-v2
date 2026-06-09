@@ -32,6 +32,9 @@
     <title>Drumpad</title>
     <script>
       ;(function () {
+        var height = window.visualViewport ? window.visualViewport.height : window.innerHeight
+        document.documentElement.style.setProperty('--app-height', height + 'px')
+
         var isStandalone =
           window.navigator.standalone === true ||
           window.matchMedia('(display-mode: standalone)').matches ||

@@ -5,6 +5,9 @@ import { registerSW } from 'virtual:pwa-register'
 import App from './App.vue'
 import './assets/main.css'
 import './themes'
+import { setupMobileViewportHeight } from './utils/mobileViewportHeight'
+
+setupMobileViewportHeight()
 
 registerSW({
   onRegisteredSW(_swUrl: string, registration?: ServiceWorkerRegistration) {

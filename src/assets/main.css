@@ -52,6 +52,8 @@ h6 {
 
 /* CSS Variables */
 :root {
+  --app-height: 100dvh;
+
   /* Fonts */
   --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-secondary: 'JetBrains Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace;
@@ -96,37 +98,26 @@ body {
 /* Mobile shell: header + scrollable main + bottom nav in a single column */
 @media (max-width: 767px), (hover: none) and (pointer: coarse) {
   html,
-  body {
-    height: 100dvh;
-    max-height: 100dvh;
+  body,
+  #app {
+    height: var(--app-height, 100dvh);
     overflow: hidden;
   }
 
   #app {
-    height: 100dvh;
-    max-height: 100dvh;
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
 
-  /* Browser only: lift nav controls above the bottom toolbar */
-  html:not(.is-standalone-pwa) .mobile-nav {
-    padding-bottom: calc(
-      0.75rem + env(safe-area-inset-bottom, 0px) + max(0px, 100vh - 100dvh)
-    );
+  .app-main {
+    flex: 1 1 auto;
+    min-height: 0;
   }
 
-  /* Installed PWA: nav sits flush at the bottom — no browser-toolbar inset */
-  html.is-standalone-pwa .mobile-nav {
+  .mobile-nav {
+    flex: 0 0 auto;
+    margin-top: auto;
     padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
-  }
-}
-
-/* Installed PWA (display-mode fallback when html class is missing) */
-@media (display-mode: standalone), (display-mode: fullscreen) {
-  @media (max-width: 767px), (hover: none) and (pointer: coarse) {
-    .mobile-nav {
-      padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
-    }
   }
 }
 
