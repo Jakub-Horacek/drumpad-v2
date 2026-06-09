@@ -140,7 +140,7 @@ export default defineComponent({
 
 #app.is-standalone-pwa {
   min-height: 0;
-  height: 100%;
+  flex: 1 1 auto;
 }
 
 /* Main Content */
@@ -159,15 +159,6 @@ export default defineComponent({
 .app-main--loading {
   opacity: 0.3;
   pointer-events: none;
-}
-
-/* Reserve space for fixed bottom nav in iOS standalone PWA */
-@supports (-webkit-touch-callout: none) {
-  @media (max-width: 767px), (hover: none) and (pointer: coarse) {
-    :global(html.is-standalone-pwa) .app-main {
-      padding-bottom: calc(var(--pwa-nav-block-height, 4.75rem) + var(--pwa-nav-shift, 34px));
-    }
-  }
 }
 
 </style>

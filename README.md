@@ -93,17 +93,17 @@ public/
 
 ### Keyboard shortcuts
 
-| Key | Action |
-| --- | --- |
-| `1`–`9` / `Numpad 1`–`9` | Play drums |
-| `-` / `Numpad -` | Toggle hi-hat open / closed |
-| `+` / `Numpad +` | Toggle snare / rimshot |
-| `0` / `Numpad 0` | Start / stop recording |
-| `.` / `Numpad .` | Play / stop recording |
-| `Numpad Enter` | Clear recording |
-| `/` / `Numpad /` | Decrease metronome BPM (hold to repeat) |
-| `*` / `Numpad *` | Increase metronome BPM (hold to repeat) |
-| `Space` | Start / stop metronome |
+| Key                      | Action                                  |
+| ------------------------ | --------------------------------------- |
+| `1`–`9` / `Numpad 1`–`9` | Play drums                              |
+| `-` / `Numpad -`         | Toggle hi-hat open / closed             |
+| `+` / `Numpad +`         | Toggle snare / rimshot                  |
+| `0` / `Numpad 0`         | Start / stop recording                  |
+| `.` / `Numpad .`         | Play / stop recording                   |
+| `Numpad Enter`           | Clear recording                         |
+| `/` / `Numpad /`         | Decrease metronome BPM (hold to repeat) |
+| `*` / `Numpad *`         | Increase metronome BPM (hold to repeat) |
+| `Space`                  | Start / stop metronome                  |
 
 Mouse clicks on pads work the same as number keys. On-screen buttons mirror record, play, clear, metronome, and BPM controls.
 
@@ -163,14 +163,14 @@ RIDE_1.mp3, RIDE_2.mp3, RIDE_3.mp3          # Ride cymbal
 
 Themes live in `src/themes/` and are registered in `src/themes/index.ts`. Each theme is a CSS file that defines custom properties (background, accent, metronome colors, pad styles, etc.). The active theme class is applied on the document root and app container (`theme-dark`, `theme-light`, `theme-cyber`, `theme-og`, `theme-sunset`, `theme-ocean`).
 
-| Theme | Description |
-| --- | --- |
-| **Dark** | Default dark theme with blue accents |
-| **Light** | Clean light theme with blue accents |
-| **Cyber** | Cyberpunk neon green and pink |
-| **OG** | Original screenshot gray and orange |
-| **Sunset** | Warm dusk tones with coral accents |
-| **Ocean** | Deep sea blues with teal accents |
+| Theme      | Description                          |
+| ---------- | ------------------------------------ |
+| **Dark**   | Default dark theme with blue accents |
+| **Light**  | Clean light theme with blue accents  |
+| **Cyber**  | Cyberpunk neon green and pink        |
+| **OG**     | Original screenshot gray and orange  |
+| **Sunset** | Warm dusk tones with coral accents   |
+| **Ocean**  | Deep sea blues with teal accents     |
 
 Changing the theme updates browser UI chrome (`theme-color` meta tag) and the favicon.
 
@@ -198,10 +198,10 @@ Drumpad is a Progressive Web App powered by [vite-plugin-pwa](https://vite-pwa-o
 
 ### Install on mobile
 
-| Platform | Steps |
-| --- | --- |
-| **iPhone / iPad (Safari)** | Tap **Share**, then **Add to Home Screen** |
-| **Android (Chrome)** | Open the browser menu, then **Install app** or **Add to Home screen** |
+| Platform                   | Steps                                                                 |
+| -------------------------- | --------------------------------------------------------------------- |
+| **iPhone / iPad (Safari)** | Tap **Share**, then **Add to Home Screen**                            |
+| **Android (Chrome)**       | Open the browser menu, then **Install app** or **Add to Home screen** |
 
 The installed app opens full-screen (standalone) with a portrait-oriented layout. A dedicated native mobile app is planned for the future.
 
@@ -270,3 +270,5 @@ MIT License — feel free to use this project for personal or commercial purpose
 - [ ] Custom sound upload
 - [ ] Advanced effects (reverb, delay)
 - [ ] Native mobile app
+- [ ] Play a drumroll sound on snare button hold
+- [ ] Option to export your recordings as an audio file

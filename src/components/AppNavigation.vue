@@ -87,7 +87,7 @@ export default defineComponent({
   padding-top: 0.75rem;
   padding-left: 0.75rem;
   padding-right: 0.75rem;
-  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+  padding-bottom: 0.75rem;
   gap: 0.25rem;
   box-sizing: border-box;
 }
@@ -120,23 +120,6 @@ export default defineComponent({
 .mobile-nav__label {
   font-size: 0.75rem;
   font-weight: 500;
-}
-
-/*
- * iOS standalone PWA: pin nav to the physical bottom and nudge into the
- * ~34px band WebKit leaves below 100dvh. Browser tabs keep the flex layout.
- */
-@supports (-webkit-touch-callout: none) {
-  @media (max-width: 767px), (hover: none) and (pointer: coarse) {
-    :global(html.is-standalone-pwa) .mobile-nav {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      margin-top: 0;
-      padding-bottom: calc(0.75rem + var(--pwa-nav-shift, 34px));
-    }
-  }
 }
 
 /* Desktop styles */

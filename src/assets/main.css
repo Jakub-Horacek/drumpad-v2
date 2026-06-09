@@ -114,47 +114,66 @@ html:not(.is-standalone-pwa) body {
     min-height: 0;
   }
 
-  .mobile-nav {
+  html:not(.is-standalone-pwa) .mobile-nav {
     flex: 0 0 auto;
     margin-top: auto;
     padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
   }
 }
 
-/* Installed PWA: same flex shell as the browser tab, pinned to the viewport. */
+/*
+ * Installed PWA: lock the document to the device viewport and absorb the
+ * home-indicator band once via body padding (not nav padding + fixed hacks).
+ * Body bg is set to the nav color in applyPwaChromeColors so the inset band
+ * blends with the bar above it.
+ */
 @media (max-width: 767px), (hover: none) and (pointer: coarse) {
   html.is-standalone-pwa {
-    /* Rough iOS home-indicator band when env(safe-area-inset-bottom) lies */
-    --pwa-nav-shift: 34px;
-    /* Nav bar content box + vertical padding (used to pad scrollable main) */
-    --pwa-nav-block-height: 4.75rem;
-  }
-
-  html.is-standalone-pwa,
-  html.is-standalone-pwa body,
-  html.is-standalone-pwa #app {
-    height: 100dvh;
     overflow: hidden;
+    height: 100%;
   }
 
   html.is-standalone-pwa body {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    margin: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
     touch-action: manipulation;
+  }
+
+  html.is-standalone-pwa #app {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  html.is-standalone-pwa .app-main {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  html.is-standalone-pwa .mobile-nav {
+    flex: 0 0 auto;
+    margin-top: auto;
+    padding-bottom: 0.75rem;
   }
 }
 
-/*
- * iOS standalone + viewport-fit=cover: 100dvh/100svh exclude the home-indicator
- * band but 100vh includes it. Using both shell height AND extra nav padding
- * double-counts the inset — use 100vh only here.
- *
- * @see https://bugs.webkit.org/show_bug.cgi?id=254868
- */
+/* iOS standalone: env(safe-area-inset-bottom) is often 0 despite viewport-fit=cover */
 @supports (-webkit-touch-callout: none) {
   @media (max-width: 767px), (hover: none) and (pointer: coarse) {
-    html.is-standalone-pwa,
-    html.is-standalone-pwa body,
-    html.is-standalone-pwa #app {
-      height: 100vh;
+    html.is-standalone-pwa body {
+      padding-bottom: max(env(safe-area-inset-bottom, 0px), 34px);
     }
   }
 }
