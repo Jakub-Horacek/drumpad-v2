@@ -99,7 +99,7 @@
               Drumpad is a Progressive Web App (PWA). You can add it to your home screen for a
               full-screen, app-like experience — including offline use after the first visit.
             </p>
-            <ul v-if="isTouchPrimary && !showIosGuide" class="info-mobile__steps">
+            <ul v-if="!isTouchPrimary" class="info-mobile__steps">
               <li>
                 <strong>iPhone / iPad (Safari):</strong> tap Share, then
                 <em>Add to Home Screen</em>.
@@ -109,7 +109,7 @@
                 <em>Install app</em> or <em>Add to Home screen</em>.
               </li>
             </ul>
-            <PwaInstallPrompt v-if="isTouchPrimary" variant="inline" />
+            <PwaInstallPrompt v-if="isTouchPrimary" />
             <span class="info-mobile__badge info-mobile__badge--available">Available now</span>
           </template>
         </div>
@@ -198,7 +198,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { usePwaInstall } from '../composables/usePwaInstall'
 import { useStandalonePwa } from '../composables/useStandalonePwa'
 import { useTouchPrimaryDevice } from '../composables/useTouchPrimaryDevice'
 import PwaInstallPrompt from './PwaInstallPrompt.vue'
@@ -215,11 +214,9 @@ export default defineComponent({
   setup() {
     const { isTouchPrimary } = useTouchPrimaryDevice()
     const { isStandalonePwa } = useStandalonePwa()
-    const { showIosGuide } = usePwaInstall()
     return {
       isTouchPrimary,
       isStandalonePwa,
-      showIosGuide,
       LEGACY_DRUMPAD_URL,
       LEGACY_REPO_URL,
       SOURCE_REPO_URL,

@@ -84,9 +84,7 @@ export default defineComponent({
   z-index: 100;
   background: var(--bg-secondary);
   border-top: 1px solid var(--border-color);
-  padding-top: 0.75rem;
-  padding-left: 0.75rem;
-  padding-right: 0.75rem;
+  padding: 0.75rem 0.75rem 0.75rem;
   gap: 0.25rem;
   box-sizing: border-box;
 }

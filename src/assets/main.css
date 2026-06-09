@@ -141,7 +141,9 @@ html:not(.is-standalone-pwa) body {
   html.is-standalone-pwa .mobile-nav {
     flex: 0 0 auto;
     margin-top: auto;
-    padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 34px));
+    /* No safe-area padding here — 34px fallback left an empty band below the buttons.
+       Shell color (theme-color / html bg) handles the home-indicator zone instead. */
+    padding-bottom: 0.75rem;
   }
 }
 

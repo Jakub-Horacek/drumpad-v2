@@ -14,7 +14,6 @@
 
     <!-- Main Content -->
     <main class="app-main" :class="{ 'app-main--loading': store.isAudioLoading }">
-      <PwaInstallPrompt v-if="canShowBanner" variant="banner" dismissible />
       <!-- Info View -->
       <InfoView v-if="store.config.currentView === 'info'" />
 
@@ -52,9 +51,7 @@
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, watch } from 'vue'
 import { inject } from '@vercel/analytics'
-import { usePwaInstall } from './composables/usePwaInstall'
 import { useStandalonePwa } from './composables/useStandalonePwa'
-import PwaInstallPrompt from './components/PwaInstallPrompt.vue'
 import { applyDocumentTheme } from './themes'
 import { useConfigStore } from './stores/configStore'
 import { useDrumpadStore } from './stores/drumpadStore'
@@ -79,13 +76,11 @@ export default defineComponent({
     SettingsView,
     AppNavigation,
     AudioLoadingOverlay,
-    PwaInstallPrompt,
   },
   setup() {
     const store = useDrumpadStore()
     const configStore = useConfigStore()
     const { isStandalonePwa } = useStandalonePwa()
-    const { canShowBanner, recordVisit } = usePwaInstall()
 
     watch(
       () => store.config.currentTheme,
@@ -103,7 +98,6 @@ export default defineComponent({
     }
 
     onMounted(async () => {
-      recordVisit()
       configStore.normalizeVolumes()
       await store.initializeAudio()
       window.addEventListener('keydown', handleKeyDown)
@@ -129,7 +123,6 @@ export default defineComponent({
       store,
       configStore,
       isStandalonePwa,
-      canShowBanner,
     }
   },
 })
