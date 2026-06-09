@@ -30,6 +30,17 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
     <title>Drumpad</title>
+    <script>
+      ;(function () {
+        var isStandalone =
+          window.navigator.standalone === true ||
+          window.matchMedia('(display-mode: standalone)').matches ||
+          window.matchMedia('(display-mode: fullscreen)').matches
+        if (isStandalone) {
+          document.documentElement.classList.add('is-standalone-pwa')
+        }
+      })()
+    </script>
   </head>
   <body>
     <div id="app"></div>

@@ -7,12 +7,20 @@ function detectStandalonePwa(): boolean {
     return false
   }
 
+  if (document.documentElement.classList.contains('is-standalone-pwa')) {
+    return true
+  }
+
   const navigatorWithStandalone = window.navigator as Navigator & { standalone?: boolean }
   if (navigatorWithStandalone.standalone === true) {
     return true
   }
 
   return window.matchMedia(STANDALONE_DISPLAY_MEDIA_QUERY).matches
+}
+
+function applyStandalonePwaClass(isStandalone: boolean): void {
+  document.documentElement.classList.toggle('is-standalone-pwa', isStandalone)
 }
 
 function createStandalonePwaState(): { isStandalonePwa: Ref<boolean> } {
@@ -22,9 +30,13 @@ function createStandalonePwaState(): { isStandalonePwa: Ref<boolean> } {
     return { isStandalonePwa }
   }
 
+  applyStandalonePwaClass(isStandalonePwa.value)
+
   const mql = window.matchMedia(STANDALONE_DISPLAY_MEDIA_QUERY)
   const sync = () => {
-    isStandalonePwa.value = detectStandalonePwa()
+    const next = detectStandalonePwa()
+    isStandalonePwa.value = next
+    applyStandalonePwaClass(next)
   }
 
   mql.addEventListener('change', sync)

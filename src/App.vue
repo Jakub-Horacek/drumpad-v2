@@ -139,7 +139,7 @@ export default defineComponent({
 }
 
 @media (max-width: 767px), (hover: none) and (pointer: coarse) {
-  #app {
+  #app:not(.is-standalone-pwa) {
     height: 100dvh;
     max-height: 100dvh;
     overflow: hidden;
@@ -162,7 +162,4 @@ export default defineComponent({
   pointer-events: none;
 }
 
-.is-standalone-pwa .app-main {
-  padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
-}
 </style>

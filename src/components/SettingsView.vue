@@ -152,6 +152,7 @@ export default defineComponent({
 .view {
   min-height: calc(100vh - 8rem);
   padding: 1rem;
+  padding-bottom: calc(1rem + var(--mobile-nav-offset, 0px));
 }
 
 .view__content {

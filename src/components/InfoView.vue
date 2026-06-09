@@ -85,22 +85,32 @@
         <h3 class="info-section__title">Mobile</h3>
 
         <div class="info-mobile__block">
-          <h4 class="info-mobile__subtitle">Install as an app</h4>
-          <p class="info-mobile__text">
-            Drumpad is a Progressive Web App (PWA). You can add it to your home screen for a
-            full-screen, app-like experience — including offline use after the first visit.
-          </p>
-          <ul class="info-mobile__steps">
-            <li>
-              <strong>iPhone / iPad (Safari):</strong> tap Share, then
-              <em>Add to Home Screen</em>.
-            </li>
-            <li>
-              <strong>Android (Chrome):</strong> open the browser menu, then
-              <em>Install app</em> or <em>Add to Home screen</em>.
-            </li>
-          </ul>
-          <span class="info-mobile__badge info-mobile__badge--available">Available now</span>
+          <template v-if="isStandalonePwa">
+            <h4 class="info-mobile__subtitle">Installed app</h4>
+            <p class="info-mobile__text">
+              You are currently using Drumpad as an installed app — full-screen, on your home
+              screen, with offline support after your first visit.
+            </p>
+            <span class="info-mobile__badge info-mobile__badge--active">Active now</span>
+          </template>
+          <template v-else>
+            <h4 class="info-mobile__subtitle">Install as an app</h4>
+            <p class="info-mobile__text">
+              Drumpad is a Progressive Web App (PWA). You can add it to your home screen for a
+              full-screen, app-like experience — including offline use after the first visit.
+            </p>
+            <ul class="info-mobile__steps">
+              <li>
+                <strong>iPhone / iPad (Safari):</strong> tap Share, then
+                <em>Add to Home Screen</em>.
+              </li>
+              <li>
+                <strong>Android (Chrome):</strong> open the browser menu, then
+                <em>Install app</em> or <em>Add to Home screen</em>.
+              </li>
+            </ul>
+            <span class="info-mobile__badge info-mobile__badge--available">Available now</span>
+          </template>
         </div>
 
         <div class="info-mobile__block info-mobile__block--native">
@@ -151,6 +161,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { useStandalonePwa } from '../composables/useStandalonePwa'
 import { useTouchPrimaryDevice } from '../composables/useTouchPrimaryDevice'
 
 const LEGACY_DRUMPAD_URL = 'https://jakub-horacek.github.io/drumpad/'
@@ -161,8 +172,10 @@ export default defineComponent({
   name: 'InfoView',
   setup() {
     const { isTouchPrimary } = useTouchPrimaryDevice()
+    const { isStandalonePwa } = useStandalonePwa()
     return {
       isTouchPrimary,
+      isStandalonePwa,
       LEGACY_DRUMPAD_URL,
       LEGACY_REPO_URL,
       SOURCE_REPO_URL,
@@ -175,6 +188,7 @@ export default defineComponent({
 .view {
   min-height: calc(100vh - 8rem);
   padding: 1rem;
+  padding-bottom: calc(1rem + var(--mobile-nav-offset, 0px));
 }
 
 .view__content {
@@ -367,6 +381,12 @@ export default defineComponent({
   color: #22c55e;
   background: color-mix(in srgb, #22c55e 15%, var(--bg-tertiary));
   border-color: #22c55e;
+}
+
+.info-mobile__badge--active {
+  color: var(--accent-color);
+  background: var(--accent-color-light, rgba(59, 130, 246, 0.15));
+  border-color: var(--accent-color);
 }
 
 .info-list {

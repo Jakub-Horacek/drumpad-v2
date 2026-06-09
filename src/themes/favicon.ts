@@ -18,9 +18,11 @@ export const THEME_FAVICON_PALETTES: Record<string, ThemeFaviconPalette> = {
 const FILLED_PAD_POSITIONS = new Set([2, 3, 5, 7, 9])
 
 const VIEW_SIZE = 32
-const GRID_INSET = 5
 const CELL = 7
 const GAP = 1
+const GRID_COLS = 3
+const GRID_SIZE = GRID_COLS * CELL + (GRID_COLS - 1) * GAP
+const GRID_INSET = (VIEW_SIZE - GRID_SIZE) / 2
 
 /**
  * Build an SVG favicon: 3×3 grid with filled and outline-only pads.
