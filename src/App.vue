@@ -138,6 +138,11 @@ export default defineComponent({
   color: var(--text-primary);
 }
 
+#app.is-standalone-pwa {
+  min-height: 0;
+  height: 100%;
+}
+
 /* Main Content */
 .app-main {
   flex: 1;

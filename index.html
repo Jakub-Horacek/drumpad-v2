@@ -70,7 +70,13 @@
           })
         }
 
-        if (!isStandalone) {
+        if (isStandalone) {
+          var fullHeight = window.innerHeight
+          var layoutHeight = document.documentElement.clientHeight
+          var bottomGap = Math.max(0, fullHeight - layoutHeight)
+          document.documentElement.style.setProperty('--pwa-shell-height', fullHeight + 'px')
+          document.documentElement.style.setProperty('--pwa-bottom-gap', bottomGap + 'px')
+        } else {
           var height = window.visualViewport
             ? window.visualViewport.height
             : window.innerHeight

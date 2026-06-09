@@ -84,9 +84,16 @@ export default defineComponent({
   z-index: 100;
   background: var(--bg-secondary);
   border-top: 1px solid var(--border-color);
-  padding: 0.75rem;
+  padding-top: 0.75rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
   gap: 0.25rem;
   box-sizing: border-box;
+}
+
+html.is-standalone-pwa .mobile-nav {
+  padding-bottom: calc(0.75rem + var(--pwa-bottom-gap, env(safe-area-inset-bottom, 0px)));
 }
 
 .mobile-nav__btn {

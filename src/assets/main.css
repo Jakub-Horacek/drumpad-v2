@@ -89,8 +89,8 @@ html {
   background: var(--bg-primary);
 }
 
-html,
-body {
+html:not(.is-standalone-pwa),
+html:not(.is-standalone-pwa) body {
   min-height: 100%;
   min-height: 100dvh;
 }
@@ -122,47 +122,48 @@ body {
 }
 
 /*
- * iOS standalone PWA layout.
- * Use flex + svh (full small viewport) — not position:fixed on the nav or absolute #app.
- * html/body hex backgrounds are set in applyDocumentTheme (iOS ignores CSS vars for chrome).
+ * iOS standalone PWA shell.
+ *
+ * 100dvh is shorter than the physical screen (home-indicator band). JS sets
+ * --pwa-shell-height (innerHeight) and --pwa-bottom-gap (innerHeight − clientHeight).
+ * Nav stays a flex child; its padding-bottom fills the band with nav background.
+ *
+ * @see https://stackoverflow.com/questions/79902310/
  */
 @supports (-webkit-touch-callout: none) {
   @media (max-width: 767px), (hover: none) and (pointer: coarse) {
     html.is-standalone-pwa {
-      min-height: calc(100% + env(safe-area-inset-top));
-    }
-
-    html.is-standalone-pwa,
-    html.is-standalone-pwa body,
-    html.is-standalone-pwa #app {
-      height: 100svh;
-      height: 100dvh;
-      min-height: 100svh;
-      min-height: -webkit-fill-available;
+      height: 100%;
       overflow: hidden;
     }
 
     html.is-standalone-pwa body {
       display: flex;
       flex-direction: column;
+      height: var(--pwa-shell-height, 100dvh);
+      max-height: var(--pwa-shell-height, 100dvh);
       margin: 0;
       padding: 0;
+      overflow: hidden;
       touch-action: manipulation;
     }
 
     html.is-standalone-pwa #app {
       display: flex;
       flex-direction: column;
-      flex: 1;
+      flex: 1 1 auto;
       width: 100%;
       min-height: 0;
+      height: 100%;
+      max-height: 100%;
+      overflow: hidden;
     }
 
     html.is-standalone-pwa .mobile-nav {
       flex: 0 0 auto;
       margin-top: auto;
       padding: 0.75rem;
-      padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+      padding-bottom: calc(0.75rem + var(--pwa-bottom-gap, env(safe-area-inset-bottom, 0px)));
     }
   }
 }
