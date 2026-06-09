@@ -39,6 +39,7 @@
           window.matchMedia('(display-mode: minimal-ui)').matches
         if (isStandalone) {
           document.documentElement.classList.add('is-standalone-pwa')
+          document.documentElement.style.backgroundColor = '#0f0f23'
           var viewport = document.querySelector('meta[name="viewport"]')
           if (viewport) {
             viewport.setAttribute(
@@ -58,6 +59,11 @@
     </script>
   </head>
   <body>
+    <script>
+      if (document.documentElement.classList.contains('is-standalone-pwa')) {
+        document.body.style.backgroundColor = '#0f0f23'
+      }
+    </script>
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>

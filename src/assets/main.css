@@ -119,32 +119,63 @@ body {
     margin-top: auto;
     padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
   }
+}
 
-  /*
-   * PWA: pin the app shell to the physical screen edges (viewport-fit=cover).
-   * Avoids a dead zone below the nav from innerHeight / dvh on iOS.
-   */
-  html.is-standalone-pwa,
-  html.is-standalone-pwa body {
-    height: 100%;
-    overflow: hidden;
-    touch-action: manipulation;
-  }
+/*
+ * iOS standalone PWA bottom-gap fixes.
+ *
+ * With viewport-fit=cover + black-translucent, iOS shifts the layout viewport up
+ * and leaves a system strip below unless the document height is compensated.
+ * env(safe-area-inset-bottom) is often 0 in standalone — do not rely on it for layout.
+ *
+ * @see https://dev.to/karmasakshi/make-your-pwas-look-handsome-on-ios-1o08
+ * @see https://github.com/ionic-team/ionic-framework/issues/12948
+ */
+@supports (-webkit-touch-callout: none) {
+  @media (max-width: 767px), (hover: none) and (pointer: coarse) {
+    html.is-standalone-pwa {
+      min-height: calc(100% + env(safe-area-inset-top));
+      background-color: #0f0f23;
+    }
 
-  html.is-standalone-pwa #app {
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: auto;
-    min-height: 0;
-    max-height: none;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
+    html.is-standalone-pwa body {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-height: 100dvh;
+      min-height: -webkit-fill-available;
+      margin: 0;
+      padding: 0;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      overflow: hidden;
+      touch-action: manipulation;
+      /* Hex fallback — iOS paints the home-indicator strip from this color */
+      background-color: #0f0f23;
+    }
 
-  html.is-standalone-pwa .mobile-nav {
-    padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
+    html.is-standalone-pwa #app {
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      bottom: 0;
+      /* Extend past the layout viewport by the top inset (bottom inset is 0) */
+      bottom: calc(-1 * env(safe-area-inset-top, 0px));
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    /* Flex child — NOT position:fixed (fixed bottom-0 floats above the true bottom) */
+    html.is-standalone-pwa .mobile-nav {
+      flex: 0 0 auto;
+      margin-top: auto;
+      padding: 0.75rem;
+      padding-bottom: 0.75rem;
+      background: var(--bg-secondary);
+    }
   }
 }
 
