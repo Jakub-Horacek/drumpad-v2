@@ -119,6 +119,20 @@ body {
     margin-top: auto;
     padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
   }
+
+  /* PWA: fill the full screen — no browser toolbar gap below the nav */
+  html.is-standalone-pwa,
+  html.is-standalone-pwa body,
+  html.is-standalone-pwa #app {
+    height: var(--app-height, 100vh);
+    min-height: var(--app-height, 100vh);
+  }
+
+  /* PWA: disable double-tap zoom (keeps single-tap drum hits responsive) */
+  html.is-standalone-pwa,
+  html.is-standalone-pwa body {
+    touch-action: manipulation;
+  }
 }
 
 body {

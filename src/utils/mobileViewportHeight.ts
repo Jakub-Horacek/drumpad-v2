@@ -1,6 +1,15 @@
-/** Sync --app-height to the visible viewport (fixes iOS Safari / PWA bottom gaps). */
+import { isStandalonePwa } from './isStandalonePwa'
+
+/**
+ * Sync --app-height to the visible viewport.
+ * Browser: visualViewport (accounts for Safari's bottom toolbar).
+ * PWA: innerHeight (full screen — no browser chrome to reserve space for).
+ */
 export function syncMobileAppHeight(): void {
-  const height = window.visualViewport?.height ?? window.innerHeight
+  const height = isStandalonePwa()
+    ? window.innerHeight
+    : (window.visualViewport?.height ?? window.innerHeight)
+
   document.documentElement.style.setProperty('--app-height', `${height}px`)
 }
 

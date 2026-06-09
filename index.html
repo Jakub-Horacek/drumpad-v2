@@ -32,9 +32,6 @@
     <title>Drumpad</title>
     <script>
       ;(function () {
-        var height = window.visualViewport ? window.visualViewport.height : window.innerHeight
-        document.documentElement.style.setProperty('--app-height', height + 'px')
-
         var isStandalone =
           window.navigator.standalone === true ||
           window.matchMedia('(display-mode: standalone)').matches ||
@@ -42,7 +39,21 @@
           window.matchMedia('(display-mode: minimal-ui)').matches
         if (isStandalone) {
           document.documentElement.classList.add('is-standalone-pwa')
+          var viewport = document.querySelector('meta[name="viewport"]')
+          if (viewport) {
+            viewport.setAttribute(
+              'content',
+              'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover',
+            )
+          }
         }
+
+        var height = isStandalone
+          ? window.innerHeight
+          : window.visualViewport
+            ? window.visualViewport.height
+            : window.innerHeight
+        document.documentElement.style.setProperty('--app-height', height + 'px')
       })()
     </script>
   </head>
