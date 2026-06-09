@@ -35,7 +35,8 @@
         var isStandalone =
           window.navigator.standalone === true ||
           window.matchMedia('(display-mode: standalone)').matches ||
-          window.matchMedia('(display-mode: fullscreen)').matches
+          window.matchMedia('(display-mode: fullscreen)').matches ||
+          window.matchMedia('(display-mode: minimal-ui)').matches
         if (isStandalone) {
           document.documentElement.classList.add('is-standalone-pwa')
         }

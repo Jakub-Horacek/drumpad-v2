@@ -80,12 +80,14 @@ export default defineComponent({
 .mobile-nav {
   display: flex;
   flex-shrink: 0;
+  width: 100%;
   z-index: 100;
   background: var(--bg-secondary);
   border-top: 1px solid var(--border-color);
   padding: 0.75rem;
   padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
   gap: 0.25rem;
+  box-sizing: border-box;
 }
 
 .mobile-nav__btn {

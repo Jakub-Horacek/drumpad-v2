@@ -138,14 +138,6 @@ export default defineComponent({
   color: var(--text-primary);
 }
 
-@media (max-width: 767px), (hover: none) and (pointer: coarse) {
-  #app:not(.is-standalone-pwa) {
-    height: 100dvh;
-    max-height: 100dvh;
-    overflow: hidden;
-  }
-}
-
 /* Main Content */
 .app-main {
   flex: 1;
@@ -153,7 +145,9 @@ export default defineComponent({
   flex-direction: column;
   min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
   transition: opacity 0.3s ease;
 }
 

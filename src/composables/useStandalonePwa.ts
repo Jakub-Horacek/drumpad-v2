@@ -1,6 +1,7 @@
 import { ref, type Ref } from 'vue'
 
-const STANDALONE_DISPLAY_MEDIA_QUERY = '(display-mode: standalone), (display-mode: fullscreen)'
+const STANDALONE_DISPLAY_MEDIA_QUERY =
+  '(display-mode: standalone), (display-mode: fullscreen), (display-mode: minimal-ui)'
 
 function detectStandalonePwa(): boolean {
   if (typeof window === 'undefined') {
