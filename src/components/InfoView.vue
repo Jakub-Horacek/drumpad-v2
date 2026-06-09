@@ -109,6 +109,14 @@
                 <em>Install app</em> or <em>Add to Home screen</em>.
               </li>
             </ul>
+            <button
+              v-if="isTouchPrimary && canPromptInstall"
+              type="button"
+              class="info-mobile__install-btn"
+              @click="promptInstallOrShare"
+            >
+              {{ installActionLabel }}
+            </button>
             <span class="info-mobile__badge info-mobile__badge--available">Available now</span>
           </template>
         </div>
@@ -197,6 +205,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { usePwaInstall } from '../composables/usePwaInstall'
 import { useStandalonePwa } from '../composables/useStandalonePwa'
 import { useTouchPrimaryDevice } from '../composables/useTouchPrimaryDevice'
 
@@ -209,9 +218,13 @@ export default defineComponent({
   setup() {
     const { isTouchPrimary } = useTouchPrimaryDevice()
     const { isStandalonePwa } = useStandalonePwa()
+    const { canPromptInstall, installActionLabel, promptInstallOrShare } = usePwaInstall()
     return {
       isTouchPrimary,
       isStandalonePwa,
+      canPromptInstall,
+      installActionLabel,
+      promptInstallOrShare,
       LEGACY_DRUMPAD_URL,
       LEGACY_REPO_URL,
       SOURCE_REPO_URL,
@@ -397,6 +410,35 @@ export default defineComponent({
 
 .info-mobile__steps strong {
   color: var(--text-primary);
+}
+
+.info-mobile__install-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.625rem 1rem;
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    transform 0.2s;
+}
+
+.info-mobile__install-btn:hover {
+  background: var(--accent-color-dark, #e67a2e);
+  transform: translateY(-1px);
+}
+
+.info-mobile__install-btn:active {
+  transform: translateY(0);
 }
 
 .info-mobile__badge {

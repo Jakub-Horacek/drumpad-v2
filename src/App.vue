@@ -144,7 +144,8 @@ export default defineComponent({
 }
 
 #app.is-standalone-pwa {
-  min-height: 0;
+  min-height: 0 !important;
+  height: 100%;
   flex: 1 1 auto;
 }
 

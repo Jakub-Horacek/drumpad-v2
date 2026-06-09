@@ -121,30 +121,13 @@ html:not(.is-standalone-pwa) body {
   }
 }
 
-/*
- * Installed PWA: --pwa-height = window.innerHeight (JS). Nav is position:fixed
- * at bottom:0; --pwa-bottom-inset extends its background into the home-indicator
- * band. No body padding — that was creating the visible strip below the nav.
- */
+/* Installed PWA shell — layout is applied via inline JS in pwaLayout.ts */
 @media (max-width: 767px), (hover: none) and (pointer: coarse) {
-  html.is-standalone-pwa {
-    height: var(--pwa-height, 100vh);
-    max-height: var(--pwa-height, 100vh);
-    overflow: hidden;
-  }
-
-  html.is-standalone-pwa body {
-    height: var(--pwa-height, 100vh);
-    max-height: var(--pwa-height, 100vh);
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
+  html.is-standalone-pwa.pwa-layout-ready body {
     touch-action: manipulation;
   }
 
-  html.is-standalone-pwa #app {
+  html.is-standalone-pwa.pwa-layout-ready #app {
     flex: 1 1 auto;
     min-height: 0;
     width: 100%;
@@ -154,21 +137,9 @@ html:not(.is-standalone-pwa) body {
     overflow: hidden;
   }
 
-  html.is-standalone-pwa .app-main {
+  html.is-standalone-pwa.pwa-layout-ready .app-main {
     flex: 1 1 auto;
     min-height: 0;
-    padding-bottom: var(--pwa-nav-height, 4.5rem);
-  }
-
-  html.is-standalone-pwa .mobile-nav {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    margin: 0;
-    z-index: 200;
-    padding-bottom: calc(0.75rem + var(--pwa-bottom-inset, env(safe-area-inset-bottom, 0px)));
   }
 }
 

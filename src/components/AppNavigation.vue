@@ -1,19 +1,24 @@
 <template>
-  <nav class="mobile-nav">
-    <button
-      v-for="view in views"
-      :key="view.id"
-      :class="['mobile-nav__btn', { 'mobile-nav__btn--active': currentView === view.id }]"
-      @click="$emit('view-change', view.id)"
-    >
-      <component :is="view.icon" class="mobile-nav__icon" />
-      <span class="mobile-nav__label">{{ view.label }}</span>
-    </button>
-  </nav>
+  <Teleport to="body" :disabled="!teleportToBody">
+    <nav class="mobile-nav">
+      <button
+        v-for="view in views"
+        :key="view.id"
+        :class="['mobile-nav__btn', { 'mobile-nav__btn--active': currentView === view.id }]"
+        @click="$emit('view-change', view.id)"
+      >
+        <component :is="view.icon" class="mobile-nav__icon" />
+        <span class="mobile-nav__label">{{ view.label }}</span>
+      </button>
+    </nav>
+  </Teleport>
 </template>
 
 <script lang="ts">
-import { defineComponent, h } from 'vue'
+import { computed, defineComponent, h, onMounted } from 'vue'
+import { useTouchPrimaryDevice } from '../composables/useTouchPrimaryDevice'
+import { syncPwaLayout } from '../utils/pwaLayout'
+import { isStandalonePwa } from '../utils/isStandalonePwa'
 import type { ViewMode } from '../types'
 
 // Icon components
@@ -62,14 +67,26 @@ export default defineComponent({
   },
   emits: ['view-change'],
   setup() {
+    const { isTouchPrimary } = useTouchPrimaryDevice()
+    const teleportToBody = computed(() => isStandalonePwa() && isTouchPrimary.value)
+
     const views = [
       { id: 'info' as ViewMode, label: 'Info', icon: 'InfoIcon' },
       { id: 'drumpad' as ViewMode, label: 'Drumpad', icon: 'GridIcon' },
       { id: 'settings' as ViewMode, label: 'Settings', icon: 'SettingsIcon' },
     ]
 
+    onMounted(() => {
+      if (!teleportToBody.value) {
+        return
+      }
+      syncPwaLayout()
+      requestAnimationFrame(syncPwaLayout)
+    })
+
     return {
       views,
+      teleportToBody,
     }
   },
 })

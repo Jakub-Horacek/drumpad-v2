@@ -20,7 +20,7 @@ export default defineConfig({
         start_url: '/',
         scope: '/',
         display: 'standalone',
-        background_color: '#0f0f23',
+        background_color: '#1a1a2e',
         theme_color: '#0f0f23',
         orientation: 'portrait-primary',
         categories: ['music', 'entertainment'],
@@ -45,6 +45,8 @@ export default defineConfig({
         ],
       },
       workbox: {
+        clientsClaim: true,
+        skipWaiting: true,
         globPatterns: ['**/*.{js,css,html,ico,png,svg,mp3,woff2}'],
         runtimeCaching: [
           {
