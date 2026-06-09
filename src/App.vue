@@ -161,4 +161,13 @@ export default defineComponent({
   pointer-events: none;
 }
 
+/* Reserve space for fixed bottom nav in iOS standalone PWA */
+@supports (-webkit-touch-callout: none) {
+  @media (max-width: 767px), (hover: none) and (pointer: coarse) {
+    :global(html.is-standalone-pwa) .app-main {
+      padding-bottom: calc(var(--pwa-nav-block-height, 4.75rem) + var(--pwa-nav-shift, 34px));
+    }
+  }
+}
+
 </style>

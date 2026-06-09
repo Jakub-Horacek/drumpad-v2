@@ -7,7 +7,6 @@ import './sunset.css'
 import './ocean.css'
 
 import { applyThemeFavicon } from './favicon'
-import { syncPwaShellLayout } from '../utils/mobileViewportHeight'
 
 export {
   applyThemeFavicon,
@@ -115,9 +114,7 @@ function applyPwaChromeColors(themeId: string): void {
   const bg = THEME_BG_COLORS[themeId] ?? THEME_BG_COLORS.dark
   const nav = THEME_NAV_BG_COLORS[themeId] ?? THEME_NAV_BG_COLORS.dark
   document.documentElement.style.backgroundColor = bg
-  // Match nav bar so any sub-layout chrome blends while shell height syncs
   document.body.style.backgroundColor = nav
-  requestAnimationFrame(syncPwaShellLayout)
 }
 
 /**

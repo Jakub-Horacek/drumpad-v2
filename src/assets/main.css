@@ -121,49 +121,40 @@ html:not(.is-standalone-pwa) body {
   }
 }
 
+/* Installed PWA: same flex shell as the browser tab, pinned to the viewport. */
+@media (max-width: 767px), (hover: none) and (pointer: coarse) {
+  html.is-standalone-pwa {
+    /* Rough iOS home-indicator band when env(safe-area-inset-bottom) lies */
+    --pwa-nav-shift: 34px;
+    /* Nav bar content box + vertical padding (used to pad scrollable main) */
+    --pwa-nav-block-height: 4.75rem;
+  }
+
+  html.is-standalone-pwa,
+  html.is-standalone-pwa body,
+  html.is-standalone-pwa #app {
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  html.is-standalone-pwa body {
+    touch-action: manipulation;
+  }
+}
+
 /*
- * iOS standalone PWA shell.
+ * iOS standalone + viewport-fit=cover: 100dvh/100svh exclude the home-indicator
+ * band but 100vh includes it. Using both shell height AND extra nav padding
+ * double-counts the inset — use 100vh only here.
  *
- * 100dvh is shorter than the physical screen (home-indicator band). JS sets
- * --pwa-shell-height (innerHeight) and --pwa-bottom-gap (innerHeight − clientHeight).
- * Nav stays a flex child; its padding-bottom fills the band with nav background.
- *
- * @see https://stackoverflow.com/questions/79902310/
+ * @see https://bugs.webkit.org/show_bug.cgi?id=254868
  */
 @supports (-webkit-touch-callout: none) {
   @media (max-width: 767px), (hover: none) and (pointer: coarse) {
-    html.is-standalone-pwa {
-      height: 100%;
-      overflow: hidden;
-    }
-
-    html.is-standalone-pwa body {
-      display: flex;
-      flex-direction: column;
-      height: var(--pwa-shell-height, 100dvh);
-      max-height: var(--pwa-shell-height, 100dvh);
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      touch-action: manipulation;
-    }
-
+    html.is-standalone-pwa,
+    html.is-standalone-pwa body,
     html.is-standalone-pwa #app {
-      display: flex;
-      flex-direction: column;
-      flex: 1 1 auto;
-      width: 100%;
-      min-height: 0;
-      height: 100%;
-      max-height: 100%;
-      overflow: hidden;
-    }
-
-    html.is-standalone-pwa .mobile-nav {
-      flex: 0 0 auto;
-      margin-top: auto;
-      padding: 0.75rem;
-      padding-bottom: calc(0.75rem + var(--pwa-bottom-gap, env(safe-area-inset-bottom, 0px)));
+      height: 100vh;
     }
   }
 }
