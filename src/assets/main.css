@@ -86,7 +86,7 @@ h6 {
 
 /* Global Styles */
 html {
-  background: #0f0f23;
+  background: var(--bg-primary);
 }
 
 html,
@@ -122,59 +122,47 @@ body {
 }
 
 /*
- * iOS standalone PWA bottom-gap fixes.
- *
- * With viewport-fit=cover + black-translucent, iOS shifts the layout viewport up
- * and leaves a system strip below unless the document height is compensated.
- * env(safe-area-inset-bottom) is often 0 in standalone — do not rely on it for layout.
- *
- * @see https://dev.to/karmasakshi/make-your-pwas-look-handsome-on-ios-1o08
- * @see https://github.com/ionic-team/ionic-framework/issues/12948
+ * iOS standalone PWA layout.
+ * Use flex + svh (full small viewport) — not position:fixed on the nav or absolute #app.
+ * html/body hex backgrounds are set in applyDocumentTheme (iOS ignores CSS vars for chrome).
  */
 @supports (-webkit-touch-callout: none) {
   @media (max-width: 767px), (hover: none) and (pointer: coarse) {
     html.is-standalone-pwa {
       min-height: calc(100% + env(safe-area-inset-top));
-      background-color: #0f0f23;
+    }
+
+    html.is-standalone-pwa,
+    html.is-standalone-pwa body,
+    html.is-standalone-pwa #app {
+      height: 100svh;
+      height: 100dvh;
+      min-height: 100svh;
+      min-height: -webkit-fill-available;
+      overflow: hidden;
     }
 
     html.is-standalone-pwa body {
-      position: relative;
       display: flex;
       flex-direction: column;
-      min-height: 100dvh;
-      min-height: -webkit-fill-available;
       margin: 0;
       padding: 0;
-      padding-bottom: env(safe-area-inset-bottom, 0px);
-      overflow: hidden;
       touch-action: manipulation;
-      /* Hex fallback — iOS paints the home-indicator strip from this color */
-      background-color: #0f0f23;
     }
 
     html.is-standalone-pwa #app {
-      position: absolute;
-      top: 0;
-      right: 0;
-      left: 0;
-      bottom: 0;
-      /* Extend past the layout viewport by the top inset (bottom inset is 0) */
-      bottom: calc(-1 * env(safe-area-inset-top, 0px));
       display: flex;
       flex-direction: column;
+      flex: 1;
       width: 100%;
       min-height: 0;
-      overflow: hidden;
     }
 
-    /* Flex child — NOT position:fixed (fixed bottom-0 floats above the true bottom) */
     html.is-standalone-pwa .mobile-nav {
       flex: 0 0 auto;
       margin-top: auto;
       padding: 0.75rem;
-      padding-bottom: 0.75rem;
-      background: var(--bg-secondary);
+      padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
     }
   }
 }

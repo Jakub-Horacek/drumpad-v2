@@ -39,7 +39,6 @@
           window.matchMedia('(display-mode: minimal-ui)').matches
         if (isStandalone) {
           document.documentElement.classList.add('is-standalone-pwa')
-          document.documentElement.style.backgroundColor = '#0f0f23'
           var viewport = document.querySelector('meta[name="viewport"]')
           if (viewport) {
             viewport.setAttribute(
@@ -47,6 +46,28 @@
               'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover',
             )
           }
+          var themeMatch = document.documentElement.className.match(/theme-(\w+)/)
+          var themeId = themeMatch ? themeMatch[1] : 'dark'
+          var themeBg = {
+            dark: '#0f0f23',
+            og: '#282828',
+            light: '#ffffff',
+            cyber: '#000000',
+            sunset: '#1c1218',
+            ocean: '#041c2c',
+          }
+          var navBg = {
+            dark: '#1a1a2e',
+            og: '#363636',
+            light: '#f8fafc',
+            cyber: '#0a0a0a',
+            sunset: '#2a1a22',
+            ocean: '#0a2a3f',
+          }
+          document.documentElement.style.backgroundColor = themeBg[themeId] || themeBg.dark
+          document.addEventListener('DOMContentLoaded', function () {
+            document.body.style.backgroundColor = navBg[themeId] || navBg.dark
+          })
         }
 
         if (!isStandalone) {
@@ -59,11 +80,6 @@
     </script>
   </head>
   <body>
-    <script>
-      if (document.documentElement.classList.contains('is-standalone-pwa')) {
-        document.body.style.backgroundColor = '#0f0f23'
-      }
-    </script>
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>

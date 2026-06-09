@@ -94,6 +94,29 @@ export const THEME_BG_COLORS: Record<string, string> = {
   ocean: '#041c2c',
 }
 
+/** Bottom nav bar colors per theme (--bg-secondary). Used for iOS PWA chrome below the nav. */
+export const THEME_NAV_BG_COLORS: Record<string, string> = {
+  dark: '#1a1a2e',
+  og: '#363636',
+  light: '#f8fafc',
+  cyber: '#0a0a0a',
+  sunset: '#2a1a22',
+  ocean: '#0a2a3f',
+}
+
+function applyPwaChromeColors(themeId: string): void {
+  if (!document.documentElement.classList.contains('is-standalone-pwa')) {
+    document.documentElement.style.removeProperty('background-color')
+    document.body.style.removeProperty('background-color')
+    return
+  }
+
+  const bg = THEME_BG_COLORS[themeId] ?? THEME_BG_COLORS.dark
+  const nav = THEME_NAV_BG_COLORS[themeId] ?? THEME_NAV_BG_COLORS.dark
+  document.documentElement.style.backgroundColor = bg
+  document.body.style.backgroundColor = nav
+}
+
 /**
  * Apply the active theme to the document root so html/body and browser UI match.
  */
@@ -107,4 +130,5 @@ export const applyDocumentTheme = (themeId: string): void => {
     ?.setAttribute('content', id === 'light' ? 'default' : 'black-translucent')
 
   applyThemeFavicon(id)
+  applyPwaChromeColors(id)
 }

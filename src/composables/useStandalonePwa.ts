@@ -1,6 +1,7 @@
 import { ref, type Ref } from 'vue'
 import { isStandalonePwa as detectStandalonePwa } from '../utils/isStandalonePwa'
 import { syncMobileAppHeight } from '../utils/mobileViewportHeight'
+import { applyPwaBootTheme } from '../utils/pwaBootTheme'
 
 const STANDALONE_DISPLAY_MEDIA_QUERY =
   '(display-mode: standalone), (display-mode: fullscreen), (display-mode: minimal-ui)'
@@ -18,6 +19,7 @@ function createStandalonePwaState(): { isStandalonePwa: Ref<boolean> } {
 
   applyStandalonePwaClass(isStandalonePwa.value)
   syncMobileAppHeight()
+  applyPwaBootTheme()
 
   const mql = window.matchMedia(STANDALONE_DISPLAY_MEDIA_QUERY)
   const sync = () => {
@@ -25,6 +27,7 @@ function createStandalonePwaState(): { isStandalonePwa: Ref<boolean> } {
     isStandalonePwa.value = next
     applyStandalonePwaClass(next)
     syncMobileAppHeight()
+    applyPwaBootTheme()
   }
 
   mql.addEventListener('change', sync)
