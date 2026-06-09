@@ -48,12 +48,12 @@
           }
         }
 
-        var height = isStandalone
-          ? window.innerHeight
-          : window.visualViewport
+        if (!isStandalone) {
+          var height = window.visualViewport
             ? window.visualViewport.height
             : window.innerHeight
-        document.documentElement.style.setProperty('--app-height', height + 'px')
+          document.documentElement.style.setProperty('--app-height', height + 'px')
+        }
       })()
     </script>
   </head>

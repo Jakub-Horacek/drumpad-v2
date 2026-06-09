@@ -1,15 +1,16 @@
 import { isStandalonePwa } from './isStandalonePwa'
 
 /**
- * Sync --app-height to the visible viewport.
- * Browser: visualViewport (accounts for Safari's bottom toolbar).
- * PWA: innerHeight (full screen — no browser chrome to reserve space for).
+ * Sync --app-height to the visible viewport (browser only).
+ * PWA layout uses CSS `position: fixed; inset: 0` instead — see main.css.
  */
 export function syncMobileAppHeight(): void {
-  const height = isStandalonePwa()
-    ? window.innerHeight
-    : (window.visualViewport?.height ?? window.innerHeight)
+  if (isStandalonePwa()) {
+    document.documentElement.style.removeProperty('--app-height')
+    return
+  }
 
+  const height = window.visualViewport?.height ?? window.innerHeight
   document.documentElement.style.setProperty('--app-height', `${height}px`)
 }
 

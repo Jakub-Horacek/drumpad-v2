@@ -97,9 +97,9 @@ body {
 
 /* Mobile shell: header + scrollable main + bottom nav in a single column */
 @media (max-width: 767px), (hover: none) and (pointer: coarse) {
-  html,
-  body,
-  #app {
+  html:not(.is-standalone-pwa),
+  html:not(.is-standalone-pwa) body,
+  html:not(.is-standalone-pwa) #app {
     height: var(--app-height, 100dvh);
     overflow: hidden;
   }
@@ -120,18 +120,31 @@ body {
     padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
   }
 
-  /* PWA: fill the full screen — no browser toolbar gap below the nav */
-  html.is-standalone-pwa,
-  html.is-standalone-pwa body,
-  html.is-standalone-pwa #app {
-    height: var(--app-height, 100vh);
-    min-height: var(--app-height, 100vh);
-  }
-
-  /* PWA: disable double-tap zoom (keeps single-tap drum hits responsive) */
+  /*
+   * PWA: pin the app shell to the physical screen edges (viewport-fit=cover).
+   * Avoids a dead zone below the nav from innerHeight / dvh on iOS.
+   */
   html.is-standalone-pwa,
   html.is-standalone-pwa body {
+    height: 100%;
+    overflow: hidden;
     touch-action: manipulation;
+  }
+
+  html.is-standalone-pwa #app {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  html.is-standalone-pwa .mobile-nav {
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
   }
 }
 
