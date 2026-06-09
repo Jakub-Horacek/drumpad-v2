@@ -132,7 +132,19 @@
             rel="noopener noreferrer"
           >
             <span class="info-credit-card__role">Created by</span>
-            <span class="info-credit-card__name">Jakub Horáček</span>
+            <span class="info-credit-card__name">
+              Jakub Horáček
+              <svg
+                class="info-credit-card__icon"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"
+                />
+              </svg>
+            </span>
           </a>
           <a
             class="info-credit-card"
@@ -141,7 +153,19 @@
             rel="noopener noreferrer"
           >
             <span class="info-credit-card__role">Sounds by</span>
-            <span class="info-credit-card__name">KalacSound</span>
+            <span class="info-credit-card__name">
+              KalacSound
+              <svg
+                class="info-credit-card__icon"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  d="M7.8 2h8.4A5.8 5.8 0 0 1 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8A5.8 5.8 0 0 1 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.4 5.6 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.6 18.4 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z"
+                />
+              </svg>
+            </span>
           </a>
         </div>
         <p class="info-credits__curious">Curious how this project was done?</p>
@@ -152,7 +176,19 @@
           rel="noopener noreferrer"
         >
           <span class="info-credit-card__role">Source code</span>
-          <span class="info-credit-card__name">View on GitHub</span>
+          <span class="info-credit-card__name">
+            View on GitHub
+            <svg
+              class="info-credit-card__icon"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02A9.58 9.58 0 0 1 12 6.8c.85.004 1.71.115 2.51.337 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5A10 10 0 0 0 22 12 10 10 0 0 0 12 2z"
+              />
+            </svg>
+          </span>
         </a>
       </section>
     </div>
@@ -484,9 +520,19 @@ kbd {
 }
 
 .info-credit-card__name {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
   font-size: 1.0625rem;
   font-weight: 700;
   color: var(--accent-color);
+}
+
+.info-credit-card__icon {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  opacity: 0.9;
 }
 
 @media (min-width: 768px) {
