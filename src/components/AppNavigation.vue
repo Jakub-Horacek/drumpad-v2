@@ -1,5 +1,5 @@
 <template>
-  <nav class="mobile-nav">
+  <nav :class="['mobile-nav', { 'mobile-nav--standalone': isStandalonePwa }]">
     <button
       v-for="view in views"
       :key="view.id"
@@ -14,6 +14,7 @@
 
 <script lang="ts">
 import { defineComponent, h } from 'vue'
+import { useStandalonePwa } from '../composables/useStandalonePwa'
 import type { ViewMode } from '../types'
 
 // Icon components
@@ -62,6 +63,7 @@ export default defineComponent({
   },
   emits: ['view-change'],
   setup() {
+    const { isStandalonePwa } = useStandalonePwa()
     const views = [
       { id: 'info' as ViewMode, label: 'Info', icon: 'InfoIcon' },
       { id: 'drumpad' as ViewMode, label: 'Drumpad', icon: 'GridIcon' },
@@ -69,6 +71,7 @@ export default defineComponent({
     ]
 
     return {
+      isStandalonePwa,
       views,
     }
   },
@@ -84,8 +87,18 @@ export default defineComponent({
   background: var(--bg-secondary);
   border-top: 1px solid var(--border-color);
   padding: 0.75rem;
-  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(
+    0.75rem + env(safe-area-inset-bottom, 0px) + max(0px, 100vh - 100dvh)
+  );
   gap: 0.25rem;
+}
+
+.mobile-nav--standalone {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
 }
 
 .mobile-nav__btn {

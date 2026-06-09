@@ -1,5 +1,8 @@
 <template>
-  <div id="app" :class="`theme-${store.config.currentTheme}`">
+  <div
+    id="app"
+    :class="[`theme-${store.config.currentTheme}`, { 'is-standalone-pwa': isStandalonePwa }]"
+  >
     <!-- Audio Loading Overlay -->
     <AudioLoadingOverlay
       :is-loading="store.isAudioLoading"
@@ -48,6 +51,7 @@
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, watch } from 'vue'
 import { inject } from '@vercel/analytics'
+import { useStandalonePwa } from './composables/useStandalonePwa'
 import { applyDocumentTheme } from './themes'
 import { useConfigStore } from './stores/configStore'
 import { useDrumpadStore } from './stores/drumpadStore'
@@ -76,6 +80,7 @@ export default defineComponent({
   setup() {
     const store = useDrumpadStore()
     const configStore = useConfigStore()
+    const { isStandalonePwa } = useStandalonePwa()
 
     watch(
       () => store.config.currentTheme,
@@ -117,6 +122,7 @@ export default defineComponent({
     return {
       store,
       configStore,
+      isStandalonePwa,
     }
   },
 })
@@ -154,5 +160,9 @@ export default defineComponent({
 .app-main--loading {
   opacity: 0.3;
   pointer-events: none;
+}
+
+.is-standalone-pwa .app-main {
+  padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
 }
 </style>
