@@ -8,7 +8,9 @@ import './themes'
 import { setupMobileViewportHeight } from './utils/mobileViewportHeight'
 import { setupPwaLayout } from './utils/pwaLayout'
 import { applyPwaBootTheme } from './utils/pwaBootTheme'
-import './composables/usePwaInstall'
+import { usePwaInstall } from './composables/usePwaInstall'
+
+usePwaInstall()
 
 setupMobileViewportHeight()
 setupPwaLayout()

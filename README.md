@@ -213,6 +213,14 @@ Service worker registration is in `src/main.ts` via `virtual:pwa-register`, with
 
 To regenerate PNG install icons after changing `public/favicon.svg`, use a tool such as [sharp](https://sharp.pixelplumbing.com/) to produce `pwa-192x192.png`, `pwa-512x512.png`, and `apple-touch-icon.png` (180×180).
 
+### Known limitations (iOS standalone)
+
+Installed PWAs use a different viewport than Safari. [WebKit bug 254868](https://bugs.webkit.org/show_bug.cgi?id=254868) is still open: `100dvh` / `visualViewport` can ignore the home-indicator band while `env(safe-area-inset-bottom)` often returns `0` in standalone mode.
+
+**CSS-only PWAs cannot reliably place tappable UI under the home indicator on every iPhone** — content pushed past the layout viewport gets clipped; the strip below is partly OS shell (`theme-color` / manifest), not normal DOM.
+
+We mitigate with `viewport-fit=cover`, a flex shell + `100vh` on iOS, safe-area padding on the nav, and shell colors matched to the nav bar. Full edge-to-edge control needs a native or Capacitor app.
+
 ## Browser Compatibility
 
 - Chrome 66+
@@ -266,6 +274,7 @@ MIT License — feel free to use this project for personal or commercial purpose
 
 ## Future Enhancements
 
+- [ ] **iOS PWA bottom safe area** — Revisit when [WebKit #254868](https://bugs.webkit.org/show_bug.cgi?id=254868) is fixed. See [Known limitations (iOS standalone)](#known-limitations-ios-standalone).
 - [ ] MIDI support
 - [ ] Custom sound upload
 - [ ] Advanced effects (reverb, delay)

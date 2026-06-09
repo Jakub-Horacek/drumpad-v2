@@ -14,6 +14,7 @@
 
     <!-- Main Content -->
     <main class="app-main" :class="{ 'app-main--loading': store.isAudioLoading }">
+      <PwaInstallPrompt v-if="canShowBanner" variant="banner" dismissible />
       <!-- Info View -->
       <InfoView v-if="store.config.currentView === 'info'" />
 
@@ -49,10 +50,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, nextTick, onMounted, onUnmounted, watch } from 'vue'
+import { defineComponent, onMounted, onUnmounted, watch } from 'vue'
 import { inject } from '@vercel/analytics'
+import { usePwaInstall } from './composables/usePwaInstall'
 import { useStandalonePwa } from './composables/useStandalonePwa'
-import { syncPwaLayout } from './utils/pwaLayout'
+import PwaInstallPrompt from './components/PwaInstallPrompt.vue'
 import { applyDocumentTheme } from './themes'
 import { useConfigStore } from './stores/configStore'
 import { useDrumpadStore } from './stores/drumpadStore'
@@ -77,11 +79,13 @@ export default defineComponent({
     SettingsView,
     AppNavigation,
     AudioLoadingOverlay,
+    PwaInstallPrompt,
   },
   setup() {
     const store = useDrumpadStore()
     const configStore = useConfigStore()
     const { isStandalonePwa } = useStandalonePwa()
+    const { canShowBanner, recordVisit } = usePwaInstall()
 
     watch(
       () => store.config.currentTheme,
@@ -99,10 +103,7 @@ export default defineComponent({
     }
 
     onMounted(async () => {
-      await nextTick()
-      syncPwaLayout()
-      requestAnimationFrame(syncPwaLayout)
-
+      recordVisit()
       configStore.normalizeVolumes()
       await store.initializeAudio()
       window.addEventListener('keydown', handleKeyDown)
@@ -128,6 +129,7 @@ export default defineComponent({
       store,
       configStore,
       isStandalonePwa,
+      canShowBanner,
     }
   },
 })
@@ -144,9 +146,8 @@ export default defineComponent({
 }
 
 #app.is-standalone-pwa {
-  min-height: 0 !important;
+  min-height: 0;
   height: 100%;
-  flex: 1 1 auto;
 }
 
 /* Main Content */

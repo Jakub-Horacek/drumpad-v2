@@ -121,25 +121,40 @@ html:not(.is-standalone-pwa) body {
   }
 }
 
-/* Installed PWA shell — layout is applied via inline JS in pwaLayout.ts */
+/*
+ * Installed PWA: mirror the Safari flex shell (no fixed nav / translateY — iOS
+ * clips content pushed past the layout viewport). --app-height = innerHeight (JS).
+ * theme-color + html bg = nav color so the home-indicator band matches the bar.
+ */
 @media (max-width: 767px), (hover: none) and (pointer: coarse) {
-  html.is-standalone-pwa.pwa-layout-ready body {
-    touch-action: manipulation;
-  }
-
-  html.is-standalone-pwa.pwa-layout-ready #app {
-    flex: 1 1 auto;
-    min-height: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
+  html.is-standalone-pwa,
+  html.is-standalone-pwa body,
+  html.is-standalone-pwa #app {
+    height: var(--app-height, 100vh);
     overflow: hidden;
   }
 
-  html.is-standalone-pwa.pwa-layout-ready .app-main {
-    flex: 1 1 auto;
-    min-height: 0;
+  html.is-standalone-pwa body {
+    touch-action: manipulation;
+  }
+
+  html.is-standalone-pwa .mobile-nav {
+    flex: 0 0 auto;
+    margin-top: auto;
+    padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 34px));
+  }
+}
+
+/* iOS standalone: 100vh includes the home-indicator band; 100dvh does not */
+@supports (-webkit-touch-callout: none) {
+  @media (max-width: 767px), (hover: none) and (pointer: coarse) {
+    html.is-standalone-pwa,
+    html.is-standalone-pwa body,
+    html.is-standalone-pwa #app {
+      height: 100vh;
+      min-height: 100vh;
+      max-height: 100vh;
+    }
   }
 }
 

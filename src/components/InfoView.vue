@@ -99,7 +99,7 @@
               Drumpad is a Progressive Web App (PWA). You can add it to your home screen for a
               full-screen, app-like experience — including offline use after the first visit.
             </p>
-            <ul class="info-mobile__steps">
+            <ul v-if="isTouchPrimary && !showIosGuide" class="info-mobile__steps">
               <li>
                 <strong>iPhone / iPad (Safari):</strong> tap Share, then
                 <em>Add to Home Screen</em>.
@@ -109,14 +109,7 @@
                 <em>Install app</em> or <em>Add to Home screen</em>.
               </li>
             </ul>
-            <button
-              v-if="isTouchPrimary && canPromptInstall"
-              type="button"
-              class="info-mobile__install-btn"
-              @click="promptInstallOrShare"
-            >
-              {{ installActionLabel }}
-            </button>
+            <PwaInstallPrompt v-if="isTouchPrimary" variant="inline" />
             <span class="info-mobile__badge info-mobile__badge--available">Available now</span>
           </template>
         </div>
@@ -208,6 +201,7 @@ import { defineComponent } from 'vue'
 import { usePwaInstall } from '../composables/usePwaInstall'
 import { useStandalonePwa } from '../composables/useStandalonePwa'
 import { useTouchPrimaryDevice } from '../composables/useTouchPrimaryDevice'
+import PwaInstallPrompt from './PwaInstallPrompt.vue'
 
 const LEGACY_DRUMPAD_URL = 'https://jakub-horacek.github.io/drumpad/'
 const LEGACY_REPO_URL = 'https://github.com/Jakub-Horacek/drumpad'
@@ -215,16 +209,17 @@ const SOURCE_REPO_URL = 'https://github.com/Jakub-Horacek/drumpad-v2'
 
 export default defineComponent({
   name: 'InfoView',
+  components: {
+    PwaInstallPrompt,
+  },
   setup() {
     const { isTouchPrimary } = useTouchPrimaryDevice()
     const { isStandalonePwa } = useStandalonePwa()
-    const { canPromptInstall, installActionLabel, promptInstallOrShare } = usePwaInstall()
+    const { showIosGuide } = usePwaInstall()
     return {
       isTouchPrimary,
       isStandalonePwa,
-      canPromptInstall,
-      installActionLabel,
-      promptInstallOrShare,
+      showIosGuide,
       LEGACY_DRUMPAD_URL,
       LEGACY_REPO_URL,
       SOURCE_REPO_URL,
@@ -410,35 +405,6 @@ export default defineComponent({
 
 .info-mobile__steps strong {
   color: var(--text-primary);
-}
-
-.info-mobile__install-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  margin-top: 1rem;
-  padding: 0.625rem 1rem;
-  background: var(--accent-color);
-  color: white;
-  border: none;
-  border-radius: 0.5rem;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  font-family: inherit;
-  cursor: pointer;
-  transition:
-    background 0.2s,
-    transform 0.2s;
-}
-
-.info-mobile__install-btn:hover {
-  background: var(--accent-color-dark, #e67a2e);
-  transform: translateY(-1px);
-}
-
-.info-mobile__install-btn:active {
-  transform: translateY(0);
 }
 
 .info-mobile__badge {

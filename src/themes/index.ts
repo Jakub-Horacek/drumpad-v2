@@ -122,7 +122,11 @@ function applyPwaChromeColors(themeId: string): void {
 export const applyDocumentTheme = (themeId: string): void => {
   const id = getThemeById(themeId)?.id ?? 'dark'
   document.documentElement.className = `theme-${id}`
-  const color = THEME_BG_COLORS[id] ?? THEME_BG_COLORS.dark
+  const isStandalone = document.documentElement.classList.contains('is-standalone-pwa')
+  const nav = THEME_NAV_BG_COLORS[id] ?? THEME_NAV_BG_COLORS.dark
+  const color = isStandalone
+    ? nav
+    : (THEME_BG_COLORS[id] ?? THEME_BG_COLORS.dark)
   document.querySelector('meta[name="theme-color"]')?.setAttribute('content', color)
   document
     .querySelector('meta[name="apple-mobile-web-app-status-bar-style"]')

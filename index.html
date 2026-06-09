@@ -58,13 +58,15 @@
           }
           var navColor = navBg[themeId] || navBg.dark
           document.documentElement.style.backgroundColor = navColor
-          document.documentElement.style.setProperty('--pwa-height', window.innerHeight + 'px')
+          document.documentElement.style.setProperty('--app-height', window.innerHeight + 'px')
+          var themeColorMeta = document.querySelector('meta[name="theme-color"]')
+          if (themeColorMeta) {
+            themeColorMeta.setAttribute('content', navColor)
+          }
           document.addEventListener('DOMContentLoaded', function () {
             document.body.style.backgroundColor = navColor
           })
-        }
-
-        if (!isStandalone) {
+        } else {
           var height = window.visualViewport
             ? window.visualViewport.height
             : window.innerHeight
