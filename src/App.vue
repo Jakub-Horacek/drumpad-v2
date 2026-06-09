@@ -47,6 +47,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, watch } from 'vue'
+import { inject } from '@vercel/analytics'
 import { applyDocumentTheme } from './themes'
 import { useConfigStore } from './stores/configStore'
 import { useDrumpadStore } from './stores/drumpadStore'
@@ -95,6 +96,9 @@ export default defineComponent({
       configStore.normalizeVolumes()
       await store.initializeAudio()
       window.addEventListener('keydown', handleKeyDown)
+
+      // Initialize Vercel Analytics
+      inject()
 
       // Resume audio context on first user interaction
       const resumeAudio = () => {
