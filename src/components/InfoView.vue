@@ -82,11 +82,34 @@
       </section>
 
       <section class="info-section info-section--mobile">
-        <h3 class="info-section__title">Mobile App</h3>
-        <p class="info-mobile__text">
-          A dedicated mobile app is in the works. Stay tuned — coming soon.
-        </p>
-        <span class="info-mobile__badge">Coming soon</span>
+        <h3 class="info-section__title">Mobile</h3>
+
+        <div class="info-mobile__block">
+          <h4 class="info-mobile__subtitle">Install as an app</h4>
+          <p class="info-mobile__text">
+            Drumpad is a Progressive Web App (PWA). You can add it to your home screen for a
+            full-screen, app-like experience — including offline use after the first visit.
+          </p>
+          <ul class="info-mobile__steps">
+            <li>
+              <strong>iPhone / iPad (Safari):</strong> tap Share, then
+              <em>Add to Home Screen</em>.
+            </li>
+            <li>
+              <strong>Android (Chrome):</strong> open the browser menu, then
+              <em>Install app</em> or <em>Add to Home screen</em>.
+            </li>
+          </ul>
+          <span class="info-mobile__badge info-mobile__badge--available">Available now</span>
+        </div>
+
+        <div class="info-mobile__block info-mobile__block--native">
+          <h4 class="info-mobile__subtitle">Native app</h4>
+          <p class="info-mobile__text">
+            A dedicated native mobile app is also in the works. Stay tuned — coming soon.
+          </p>
+          <span class="info-mobile__badge">Coming soon</span>
+        </div>
       </section>
 
       <section class="info-section info-credits">
@@ -269,11 +292,61 @@ export default defineComponent({
   color: var(--accent-color);
 }
 
+.info-mobile__block {
+  margin-bottom: 1.25rem;
+}
+
+.info-mobile__block:last-child {
+  margin-bottom: 0;
+}
+
+.info-mobile__block--native {
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.info-mobile__subtitle {
+  margin: 0 0 0.5rem;
+  color: var(--text-primary);
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
 .info-mobile__text {
   margin: 0;
   color: var(--text-secondary);
   line-height: 1.5;
   font-size: 0.9375rem;
+}
+
+.info-mobile__steps {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+}
+
+.info-mobile__steps li {
+  margin-bottom: 0.5rem;
+  padding-left: 1rem;
+  position: relative;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.info-mobile__steps li:last-child {
+  margin-bottom: 0;
+}
+
+.info-mobile__steps li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--accent-color);
+}
+
+.info-mobile__steps strong {
+  color: var(--text-primary);
 }
 
 .info-mobile__badge {
@@ -288,6 +361,12 @@ export default defineComponent({
   background: var(--accent-color-light, rgba(59, 130, 246, 0.15));
   border: 1px solid var(--accent-color);
   border-radius: 999px;
+}
+
+.info-mobile__badge--available {
+  color: #22c55e;
+  background: color-mix(in srgb, #22c55e 15%, var(--bg-tertiary));
+  border-color: #22c55e;
 }
 
 .info-list {

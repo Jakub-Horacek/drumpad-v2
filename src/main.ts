@@ -1,9 +1,18 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { createPersistedState } from 'pinia-plugin-persistedstate'
+import { registerSW } from 'virtual:pwa-register'
 import App from './App.vue'
 import './assets/main.css'
 import './themes'
+
+registerSW({
+  onRegisteredSW(_swUrl: string, registration?: ServiceWorkerRegistration) {
+    if (registration) {
+      setInterval(() => registration.update(), 60 * 60 * 1000)
+    }
+  },
+})
 
 /**
  * Main application entry point.
