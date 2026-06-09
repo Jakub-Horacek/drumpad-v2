@@ -27,7 +27,7 @@ TypeScript cannot handle type information for `.vue` imports by default, so we r
 
 See [Vite Configuration Reference](https://vite.dev/config/).
 
-A modern drum pad application built with Vue 3, TypeScript, and Vite. Features a numpad-style layout, metronome, recording, separate volume controls, and multiple themes.
+A modern drum pad application built with Vue 3, TypeScript, and Vite. Features a numpad-style layout, metronome, recording, separate volume controls, multiple themes, and PWA install/offline support.
 
 ## Features
 
@@ -40,6 +40,7 @@ A modern drum pad application built with Vue 3, TypeScript, and Vite. Features a
 - 🔊 **Volume mix** — Separate sliders for overall, metronome, and drumpad output
 - 🎨 **Themes** — Dark, light, cyber, OG, sunset, and ocean (theme-colored favicon)
 - 📱 **Responsive UI** — Works on mobile, tablet, and desktop
+- 📲 **PWA** — Install to your home screen; offline use after the first visit
 - 🚀 **Vue 3 + Pinia + TypeScript** — Persisted settings, documented codebase
 
 ## Project Setup
@@ -82,7 +83,10 @@ src/
 public/
 ├── sounds/              # Drum sample MP3s
 ├── favicon.svg          # Default favicon (dark theme)
-└── favicons/            # Per-theme SVG favicons (dark, light, …)
+├── favicons/            # Per-theme SVG favicons (dark, light, …)
+├── pwa-192x192.png      # PWA install icon (192×192)
+├── pwa-512x512.png      # PWA install icon (512×512)
+└── apple-touch-icon.png # iOS home screen icon
 ```
 
 ## Key Controls
@@ -188,6 +192,27 @@ writeFileSync('public/favicon.svg', buildThemeFaviconSvg('dark'));
 "
 ```
 
+## Progressive Web App (PWA)
+
+Drumpad is a Progressive Web App powered by [vite-plugin-pwa](https://vite-pwa-org.netlify.app/) and Workbox. After one online visit, the app shell, drum samples, and fonts are cached so you can play offline.
+
+### Install on mobile
+
+| Platform | Steps |
+| --- | --- |
+| **iPhone / iPad (Safari)** | Tap **Share**, then **Add to Home Screen** |
+| **Android (Chrome)** | Open the browser menu, then **Install app** or **Add to Home screen** |
+
+The installed app opens full-screen (standalone) with a portrait-oriented layout. A dedicated native mobile app is planned for the future.
+
+### Configuration
+
+PWA settings live in `vite.config.ts` (`VitePWA` plugin): web app manifest, service worker registration (`registerType: 'autoUpdate'`), precaching of built assets and `public/sounds/*.mp3`, and runtime caching for Google Fonts.
+
+Service worker registration is in `src/main.ts` via `virtual:pwa-register`, with hourly update checks.
+
+To regenerate PNG install icons after changing `public/favicon.svg`, use a tool such as [sharp](https://sharp.pixelplumbing.com/) to produce `pwa-192x192.png`, `pwa-512x512.png`, and `apple-touch-icon.png` (180×180).
+
 ## Browser Compatibility
 
 - Chrome 66+
@@ -202,6 +227,7 @@ Requires Web Audio API support for optimal experience.
 - Parallel audio preloading at startup
 - Web Audio API scheduling for metronome clicks
 - Vite production builds with tree shaking
+- Service worker precaching of app assets and drum samples for offline playback
 
 ## Development
 
@@ -243,4 +269,4 @@ MIT License — feel free to use this project for personal or commercial purpose
 - [ ] MIDI support
 - [ ] Custom sound upload
 - [ ] Advanced effects (reverb, delay)
-- [ ] PWA / offline mode
+- [ ] Native mobile app
