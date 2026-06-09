@@ -49,9 +49,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, onUnmounted, watch } from 'vue'
+import { defineComponent, nextTick, onMounted, onUnmounted, watch } from 'vue'
 import { inject } from '@vercel/analytics'
 import { useStandalonePwa } from './composables/useStandalonePwa'
+import { syncPwaLayout } from './utils/pwaLayout'
 import { applyDocumentTheme } from './themes'
 import { useConfigStore } from './stores/configStore'
 import { useDrumpadStore } from './stores/drumpadStore'
@@ -98,6 +99,10 @@ export default defineComponent({
     }
 
     onMounted(async () => {
+      await nextTick()
+      syncPwaLayout()
+      requestAnimationFrame(syncPwaLayout)
+
       configStore.normalizeVolumes()
       await store.initializeAudio()
       window.addEventListener('keydown', handleKeyDown)

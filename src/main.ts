@@ -6,9 +6,11 @@ import App from './App.vue'
 import './assets/main.css'
 import './themes'
 import { setupMobileViewportHeight } from './utils/mobileViewportHeight'
+import { setupPwaLayout } from './utils/pwaLayout'
 import { applyPwaBootTheme } from './utils/pwaBootTheme'
 
 setupMobileViewportHeight()
+setupPwaLayout()
 applyPwaBootTheme()
 
 registerSW({

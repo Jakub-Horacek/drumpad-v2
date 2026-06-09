@@ -48,14 +48,6 @@
           }
           var themeMatch = document.documentElement.className.match(/theme-(\w+)/)
           var themeId = themeMatch ? themeMatch[1] : 'dark'
-          var themeBg = {
-            dark: '#0f0f23',
-            og: '#282828',
-            light: '#ffffff',
-            cyber: '#000000',
-            sunset: '#1c1218',
-            ocean: '#041c2c',
-          }
           var navBg = {
             dark: '#1a1a2e',
             og: '#363636',
@@ -64,9 +56,12 @@
             sunset: '#2a1a22',
             ocean: '#0a2a3f',
           }
-          document.documentElement.style.backgroundColor = themeBg[themeId] || themeBg.dark
+          var navColor = navBg[themeId] || navBg.dark
+          document.documentElement.style.backgroundColor = navColor
+          document.documentElement.style.setProperty('--pwa-height', window.innerHeight + 'px')
+          document.documentElement.style.setProperty('--pwa-bottom-inset', '34px')
           document.addEventListener('DOMContentLoaded', function () {
-            document.body.style.backgroundColor = navBg[themeId] || navBg.dark
+            document.body.style.backgroundColor = navColor
           })
         }
 

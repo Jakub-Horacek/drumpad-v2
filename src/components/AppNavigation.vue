@@ -87,7 +87,6 @@ export default defineComponent({
   padding-top: 0.75rem;
   padding-left: 0.75rem;
   padding-right: 0.75rem;
-  padding-bottom: 0.75rem;
   gap: 0.25rem;
   box-sizing: border-box;
 }

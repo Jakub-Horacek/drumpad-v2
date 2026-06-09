@@ -111,9 +111,8 @@ function applyPwaChromeColors(themeId: string): void {
     return
   }
 
-  const bg = THEME_BG_COLORS[themeId] ?? THEME_BG_COLORS.dark
   const nav = THEME_NAV_BG_COLORS[themeId] ?? THEME_NAV_BG_COLORS.dark
-  document.documentElement.style.backgroundColor = bg
+  document.documentElement.style.backgroundColor = nav
   document.body.style.backgroundColor = nav
 }
 

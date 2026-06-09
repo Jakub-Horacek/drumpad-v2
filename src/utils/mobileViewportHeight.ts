@@ -1,9 +1,11 @@
 import { isStandalonePwa } from './isStandalonePwa'
+import { syncPwaLayout } from './pwaLayout'
 
-/** Browser tabs: pin shell to visualViewport (Safari toolbar). PWA uses CSS 100vh on iOS. */
+/** Browser tabs: visualViewport height. Standalone: physical innerHeight via syncPwaLayout. */
 export function syncMobileAppHeight(): void {
   if (isStandalonePwa()) {
     document.documentElement.style.removeProperty('--app-height')
+    syncPwaLayout()
     return
   }
 
